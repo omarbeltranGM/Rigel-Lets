@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="dial-areaHijo" closeOnEscape="true"
+              widgetVar="areaDlgHijo" 
+              class="mr1024_50 mr500_90"
+              modal="true" 
+              closable="false"
+              resizable="false" appendTo="@(body)" position="center top" responsive="true">
+        <f:facet name="header">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                        <div class="ui-g-11 ui-md-11 ui-lg-11 Padding0">
+                            <p:outputLabel value="NUEVA PARAMETRIZACIÓN DE SUB-ÁREA" class="cssWhite"/>
+                        </div>
+                        <div class="ui-g-1 ui-md-1 ui-lg-1 Padding0 TexAlRight" >
+                            <i onclick="PF('areaDlgHijo').hide()"
+                               title="Cerrar ventana"
+                               style="cursor: pointer"
+                               class="cssWhite fa fa-close Fs20"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </f:facet>
+        <h:form id="form-area-hijo">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding5">
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <h:outputText value="Sub-área *"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <p:inputText id="area-hijo"
+                                         maxlength="56"
+                                         required="true"
+                                         requiredMessage="Sub-área es requerido"
+                                         value="#{paramAreaJSF.paramArea.area}" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding5">
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <h:outputText value="Descripción *"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Wid100 Padding0">
+                            <p:inputTextarea id="descripcion-hijo"
+                                             maxlength="65000"
+                                             required="true"
+                                             requiredMessage="Descripción es requerido"
+                                             value="#{paramAreaJSF.paramArea.descripcion}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p:remoteCommand id="btn-guardar-hijo"
+                             name="rc_a_hijo"
+                             action="#{paramAreaJSF.guardarHijo()}"
+                             update=":AreaListForm,@form,msgs"
+                             process="@form" />
+            
+        </h:form>
+        <f:facet name="footer">
+            <p:commandButton onclick="rc_a_hijo();"
+                             class="cssWhite"
+                             icon="fa fa-save"
+                             value="Guardar"/>
+        </f:facet>
+    </p:dialog>
+</ui:composition>

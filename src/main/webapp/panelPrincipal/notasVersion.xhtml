@@ -1,0 +1,57 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <p:dialog id="versionNotesDialog" 
+              widgetVar="versionNotesDialog" 
+              header="Notas de Versión"           
+              modal="true" 
+              resizable="false" 
+              width="1200px"
+              style="margin-top: 25px"
+              position="center top">
+
+        <h:form id="exportForm">
+            <p:dataTable id="versionNotesTable" value="#{versionRigelJSF.ultimasVersiones}" var="note" style="width: 100%">
+                <p:column headerText="Versión" style="width: 100px; text-align: center">
+                    <h:outputText value="#{note.version}" />
+                </p:column>
+                <p:column headerText="Fecha" style="width: 100px; text-align: center">
+                    <h:outputText value="#{note.fecha}">
+                        <f:convertDateTime pattern="yyyy-MM-dd"/>                        
+                    </h:outputText>      
+                </p:column>
+                <p:column headerText="Tipo" style="text-align: center">
+                    <p:outputPanel>
+                        <h:outputText value="#{note.idVersionTipo.nombreVersionTipo}" />                        
+                    </p:outputPanel>
+                </p:column>
+                <p:column headerText="Detalle" style="width: 70%; white-space: normal">
+                    <h:outputText value="#{versionRigelJSF.convertirDescripcionHTML(note.observaciones)}" escape="false" 
+                                  style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;" />
+                </p:column>                
+            </p:dataTable>
+        </h:form>
+        <style>
+            /* Fuerza que siempre se vean viñetas */
+            .ajustes-lista,
+            .ajustes-lista ul,
+            .ajustes-lista li {
+                list-style-type: disc;
+                list-style-position: outside;
+                display: list-item;
+                padding-left: 5px;
+            }
+
+            .ajustes-lista li {
+                margin-left: 15px;                
+            }
+            
+        </style>
+
+    </p:dialog>
+</ui:composition>

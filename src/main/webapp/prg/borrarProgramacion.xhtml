@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="dlgBorrarProgramacionOperadores" 
+              widgetVar="borrarProgModalWV"
+              modal="true" 
+              header="Borrar Programación"
+              position="center top"
+              class="mr1024_30 mr500_90"
+              resizable="false"
+              responsive="true">
+
+        <h:form id="form-borrar-programacion">
+            <p:messages id="msgs" closable="true" showSummary="true" showDetail="true"/>  
+
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-6 Padding5">
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <h:outputText value="Desde"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <p:calendar id="fromDateBorrar" 
+                                        pattern="yyyy-MM-dd"
+                                        value="#{prgControlTableMB.fromDate}" 
+                                        showOn="button" 
+                                        locale="es"
+                                        required="true"
+                                        requiredMessage="Debe seleccionar una fecha"
+                                        showTodayButton="true">
+                                <p:ajax event="dateSelect"
+                                        global="false"
+                                        update="toDateBorrar"/>
+                            </p:calendar>                               
+                        </div>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-6 Padding5">
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <h:outputText value="Hasta"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                            <p:calendar id="toDateBorrar" 
+                                        pattern="yyyy-MM-dd"
+                                        value="#{prgControlTableMB.toDate}" 
+                                        showOn="button" 
+                                        locale="es"
+                                        required="true"
+                                        requiredMessage="Debe seleccionar una fecha"
+                                        showTodayButton="true"                       
+                                        mindate="#{prgControlTableMB.fromDate}"                                        
+                                        >
+                                <p:ajax event="dateSelect" 
+                                        global="false"
+                                        process="@this"/>
+                            </p:calendar>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-12 ui-lg-12 Padding5">
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0" >
+                        <p:outputLabel value="Unidad Funcional" for="@next"/>
+                    </div>
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0" >
+                        <p:selectOneMenu id="config_freeway_id" 
+                                         value="#{selectConfigFreewayBean.idConfigFreeway}" 
+                                         filter="true"
+                                         style="width: 99.9999%"
+                                         filterMatchMode="contains"
+                                         disabled="#{selectConfigFreewayBean.disabled}"
+                                         required="true"
+                                         requiredMessage="unidad funcional es requerido">
+                            <p:ajax process="@this" listener="#{selectConfigFreewayBean.findIdConfigFreeway()}"/>
+                            <f:selectItem itemLabel="Seleccione uno" itemValue="#{null}" />
+                            <f:selectItems value="#{selectConfigFreewayBean.listConfigFreeway}" 
+                                           var="items"
+                                           itemLabel="#{items.idGopUnidadFuncional.nombre}"
+                                           itemValue="#{items.idConfigFreeway}"/>
+                        </p:selectOneMenu>
+                    </div>                    
+                </div> 
+            </div>
+
+            <div class="ui-g-12 ui-md-12 ui-lg-12 Padding5">
+                <p:commandButton title="Borrar" 
+                                 icon="fa fa-eraser"                                                     
+                                 process="@form"
+                                 value="Borrar Programación"
+                                 class="cssWhite"                                                     
+                                 update="@form"
+                                 action="#{prgControlTableMB.borrarProgramacion}"
+                                 id="elimiarProgramacion">        
+                    <p:confirm header="ADVERTENCIA" 
+                               icon="fa fa-exclamation-triangle"
+                               message=" ¿Seguro quiere borrar la programación? "
+                               class="cssWhite"/> 
+                </p:commandButton>
+            </div>                                           
+        </h:form>         
+    </p:dialog>
+</ui:composition>

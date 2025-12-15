@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <p:dialog id="dlListaChequeo"
+              widgetVar="wvPlaRecuList"
+              modal="true" 
+              resizable="false" 
+              closable="false"
+              closeOnEscape="true"
+              class="mr1024_40 mr500_90"
+              height="auto"
+              position="center top"
+              appendTo="@(body)" >
+        <f:facet name="header">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 ui-md-12 ui-lg-12 Padding0">
+                        <div class="ui-g-11 ui-md-11 ui-lg-11 Padding0">
+                            <p:outputLabel value="CREAR LISTA DE PROGRAMACIÓN" class="cssWhite"/>
+                        </div>
+                        <div class="ui-g-1 ui-md-1 ui-lg-1 Padding0 TexAlRight" >
+                            <i onclick="PF('wvPlaRecuList').hide()"
+                               title="Cerrar ventana"
+                               style="cursor: pointer"
+                               class="cssWhite fa fa-close Fs20"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </f:facet>
+        <h:form id="form-lista">
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <p:selectOneMenu id="uni_func" 
+                                     value="#{uniFuncSessionBean.i_unidad_funcional}" 
+                                     filter="true"
+                                     style="width: 99.9999%"
+                                     filterMatchMode="contains">
+                        <f:selectItem itemLabel="Seleccione Uno" itemValue="#{0}" />
+                        <f:selectItems value="#{selectUnidFuncBean.listGopUnidadFuncional}" 
+                                       var="uniFunc" 
+                                       itemLabel="#{uniFunc.nombre}"
+                                       itemValue="#{uniFunc.idGopUnidadFuncional}"/>
+                    </p:selectOneMenu>
+
+                    <div class="ui-g-6 ui-md-6 ui-lg-6 Padding5 ">
+                        <p:outputLabel value="Fecha Inicio" for="fechaIni"/>
+                        <p:calendar id="fechaIni" required="true" 
+                                    requiredMessage="'Fecha' es requerido"
+                                    value="#{planRecuProcesoProBean.fechaInicioModal}"
+                                    locale="es"
+                                    pattern="yyyy-MM-dd"
+                                    showButtonPanel="true" 
+                                    navigator="true">
+                        </p:calendar>
+                    </div>
+                    <div class="ui-g-6 ui-md-6 ui-lg-6 Padding5 ">
+                        <p:outputLabel value="Fecha Fin" for="fechaFin"/>
+                        <p:calendar id="fechaFin" required="true" 
+                                    requiredMessage="'Fecha' es requerido"
+                                    value="#{planRecuProcesoProBean.fechaFinModal}"
+                                    locale="es"
+                                    pattern="yyyy-MM-dd"
+                                    showButtonPanel="true" 
+                                    navigator="true">
+                        </p:calendar>
+                    </div>
+                </div>
+            </div>
+            <p:remoteCommand name="rc" 
+                             class="cssWhite"
+                             action="#{planRecuProcesoProBean.crearListaChequeo()}"
+                             process="@form"
+                             update="form-lista,@form,:msgs, :form-list:dt_CheckList"
+                             />
+        </h:form>
+        <f:facet name="footer">
+            <p:commandButton id="btnGuardar" 
+                             class="cssWhite"
+                             icon="fa fa-save"
+                             value="Guardar" 
+                             onclick="rc()"/>
+        </f:facet>
+    </p:dialog>
+</ui:composition>

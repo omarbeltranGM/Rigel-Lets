@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    
+    <h:form id="globalMessagesForm">
+        <p:growl id="growl" showDetail="true" life="7000" />
+    </h:form>
+
+    <p:dialog id="VersionCreateDlg" 
+              widgetVar="VersionCreateDialog" 
+              modal="true" 
+              height="auto"
+              closeOnEscape="true"
+              width="auto"
+              class="mr1024_40 mr500_90"
+              responsive="true"
+              position="center top"
+              closable="false"
+              resizable="false" 
+              appendTo="@(body)">
+
+        <f:facet name="header">
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 Padding0">
+                        <div class="ui-g-11 Padding0">
+                            <p:outputLabel value="Crear Nota de Versión" styleClass="cssWhite"/>
+                        </div>
+                        <div class="ui-g-1 Padding0 TexAlRight">
+                            <i onclick="PF('VersionCreateDialog').hide()" 
+                               title="Cerrar ventana"
+                               style="cursor: pointer"
+                               class="cssWhite fa fa-close Fs20"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </f:facet>
+
+        <h:form id="VersionCreateForm">
+            <p:messages id="messages" showDetail="true" closable="true" />
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12 Padding05">
+                        <p:outputLabel for="fecha" value="Fecha:" />
+                        <p:calendar id="fecha" 
+                                    pattern="dd-MM-yyyy"
+                                    value="#{versionRigelJSF.nuevaVersion.fecha}"
+                                    placeholder="yyyy-MM-dd"
+                                    showOn="button" 
+                                    locale="es"
+                                    required="true"
+                                    maxdate="today"
+                                    requiredMessage="Debe seleccionar una fecha"
+                                    showTodayButton="true"
+                                    navigator="true"/>
+                    </div>
+                    <div class="ui-g-12 Padding05">
+                        <p:outputLabel value="Versión:" for="version"/>
+                        <p:inputText id="version"
+                                     maxlength="20"
+                                     value="#{versionRigelJSF.nuevaVersion.version}"
+                                     required="true"
+                                     requiredMessage="Debe ingresar una versión"
+                                     placeholder="0.0.0.0"
+                                     validatorMessage="La versión debe tener el formato 0.0.0.0">
+                            <f:validateRegex pattern="^\d+\.\d+\.\d+\.\d+$"/> <!-- Expresion regular para el campo de version la cual debe ser 0.0.0.0-->
+                            <p:keyFilter regEx="/[0-9.]/i" /> <!-- Solo permite caracteres numericos y el punto (.) -->
+                        </p:inputText>
+                            
+                    </div>
+                    <div class="ui-g-12 Padding05">
+                        <p:outputLabel value="Tipo de versión:" for="tipoVersion" />
+                        <p:selectOneMenu id="tipoVersion"
+                                         value="#{versionRigelJSF.idTipoVersionSelecccionado}"                                         
+                                         required="true"
+                                         requiredMessage="El tipo de versión es requerido">
+                            <f:selectItem itemLabel="Seleccionar tipo de versión" itemValue="#{null}" />
+                            <f:selectItems value="#{versionRigelJSF.itemsVersiones}"
+                                           var="tipoVersion" 
+                                           itemLabel="#{tipoVersion.nombreVersionTipo}" 
+                                           itemValue="#{tipoVersion.idVersionTipo}" />                                                                                
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-12 Padding5 Wid100">
+                        <p:outputLabel for="Observaciones" value="Observaciones"/>
+                        <p:inputTextarea id="Observaciones" 
+                                         value="#{versionRigelJSF.nuevaVersion.observaciones}"
+                                         required="true" 
+                                         requiredMessage="Debe ingresar una observación"/>
+                        <p:outputLabel value="(*) Campos obligatorios"/>
+                    </div>
+                </div>
+            </div>            
+            <p:remoteCommand name="rc_version_save"
+                             process="VersionCreateForm"
+                             update="VersionCreateForm:messages :NotasVersionForm:tablaVersiones :globalMessagesForm:growl"
+                             actionListener="#{versionRigelJSF.guardar()}"
+                             oncomplete="if(!args.validationFailed) PF('VersionCreateDialog').hide();" />
+        </h:form>
+
+        <f:facet name="footer">           
+            <p:commandButton type="button"
+                             value="Guardar"
+                             icon="fa fa-save"
+                             styleClass="cssWhite"
+                             onclick="rc_version_save();"
+                             process="@form"
+                             update="@form :NotasVersionForm:tablaVersiones :globalMessagesForm:growl">
+                             
+                <p:confirm header="ADVERTENCIA" 
+                           icon="fa fa-exclamation-triangle" 
+                           escape="false"
+                           message="¡Está seguro de guardar esta nota de versión!" />
+            </p:commandButton>
+        </f:facet>
+    </p:dialog>
+</ui:composition>
+
+
+
+
