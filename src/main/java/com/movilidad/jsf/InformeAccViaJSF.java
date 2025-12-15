@@ -6,8 +6,8 @@
 package com.movilidad.jsf;
 
 import java.io.Serializable;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 /**
  *

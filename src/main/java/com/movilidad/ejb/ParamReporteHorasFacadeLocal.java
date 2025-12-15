@@ -10,7 +10,7 @@ import com.movilidad.util.beans.ReporteHoras;
 import com.movilidad.util.beans.ReporteHorasKactus;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

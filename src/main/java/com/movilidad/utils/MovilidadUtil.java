@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -44,12 +44,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage.Severity;
+import jakarta.faces.application.FacesMessage.Severity;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  *
@@ -312,9 +312,11 @@ public class MovilidadUtil implements Serializable {
         calendar.setTime(fecha);
         return calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
     }
-    
+
     public static boolean isSaturday(Date date) {
-        if (date == null) return false;
+        if (date == null) {
+            return false;
+        }
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
@@ -520,7 +522,11 @@ public class MovilidadUtil implements Serializable {
         File filee = new File(path);
         InputStream input = new FileInputStream(filee);
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        return new DefaultStreamedContent(input, externalContext.getMimeType(filee.getName()), filee.getName());
+        return DefaultStreamedContent.builder()
+                .stream(() -> input)
+                .contentType(externalContext.getMimeType(filee.getName()))
+                .name(filee.getName())
+                .build();
     }
 
     public static boolean eliminarFichero(String path) {
@@ -604,7 +610,12 @@ public class MovilidadUtil implements Serializable {
         if (ruta.length() > 0) {
             out = traerArchivo(ruta);
             InputStream myInputStream2 = new ByteArrayInputStream(out.toByteArray());
-            return new DefaultStreamedContent(myInputStream2);
+            return DefaultStreamedContent.builder()
+                    .stream(() -> myInputStream2)
+                    .contentType("application/octet-stream")
+                    .name("archivo.bin")
+                    .build();
+//            return new DefaultStreamedContent(myInputStream2); //es lo que retornaba conprimefaces 7.0
         } else {
             return null;
         }
@@ -650,7 +661,7 @@ public class MovilidadUtil implements Serializable {
             path2 = ruta + "/" + nombreDocu + formato;
         }
         try {
-            inputStream = file.getInputstream(); //leemos el fichero local
+            inputStream = file.getInputStream(); //leemos el fichero local
             // write the inputStream to a FileOutputStream
             outputStream = new FileOutputStream(new File(path2));
 
@@ -687,7 +698,7 @@ public class MovilidadUtil implements Serializable {
             f.mkdir();
         }
         try {
-            inputStream = file.getInputstream(); //leemos el fichero local
+            inputStream = file.getInputStream(); //leemos el fichero local
             // write the inputStream to a FileOutputStream
             outputStream = new FileOutputStream(new File(path2));
 
@@ -796,8 +807,8 @@ public class MovilidadUtil implements Serializable {
             String formato = nombre.substring(nombre.lastIndexOf('.'), nombre.length());
             String name = nameAux + formato;
             fileo = new FileOutputStream(new File(path1 + name));
-            fileo.write(file.getContents());
-            System.out.println("ruta final:"+path1 + name);
+            fileo.write(file.getContent());
+            System.out.println("ruta final:" + path1 + name);
             return path1 + name;
         } catch (IOException e) {
             MovilidadUtil.addErrorMessage("Error al cargar el archivo (crear directorios)");

@@ -3,7 +3,7 @@ package com.movilidad.util.beans;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * 

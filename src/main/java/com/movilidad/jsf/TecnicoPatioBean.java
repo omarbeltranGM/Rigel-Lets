@@ -36,12 +36,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import static java.util.regex.Pattern.matches;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.springframework.security.core.context.SecurityContextHolder;
 

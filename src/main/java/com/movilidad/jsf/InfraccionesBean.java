@@ -37,10 +37,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -50,7 +50,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -565,13 +565,13 @@ public class InfraccionesBean implements Serializable {
     }
 
     private String tipoError(Cell value) {
-        if(value.getCellTypeEnum() == CellType.STRING) {
+        if(value.getCellType() == CellType.STRING) {
             return value.getStringCellValue();
         }
-        if(value.getCellTypeEnum() == CellType.NUMERIC) {
+        if(value.getCellType() == CellType.NUMERIC) {
             return String.valueOf(value.getNumericCellValue());
         }
-        if(value.getCellTypeEnum() == CellType.BLANK) {
+        if(value.getCellType() == CellType.BLANK) {
             return "VACIO";
         }
         return "FORMATO ERROR";

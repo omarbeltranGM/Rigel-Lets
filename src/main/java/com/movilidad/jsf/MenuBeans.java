@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import jakarta.faces.bean.ManagedBean;
+import jakarta.faces.bean.ViewScoped;
+import jakarta.faces.context.FacesContext;
 
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
@@ -82,11 +82,11 @@ public class MenuBeans implements Serializable {
         raiz = new TreeSet<String>(raiz);
         int con1 = 1;
         int con2 = 1;
+        
         for (String princMenu : raiz) {
             DefaultSubMenu submenu = new DefaultSubMenu();
             submenu.setLabel(princMenu.split(",")[0]);
             submenu.setIcon(princMenu.split(",")[1]);
-
             submenu.setId("idj" + con1 + con2);
 
             cont++;
@@ -97,18 +97,14 @@ public class MenuBeans implements Serializable {
                     item.setValue(op.getNameop());
                     item.setId("id" + con1 + con2);
                     item.setIcon(op.getIconChild());
-                    //item.setActionExpression(createMethodExpression("#{navigationPage.setPage('"+op.getRecurso()+"')}", Void.TYPE, new Class[]{String.class}));
-                    //item.setCommand("#{navigationPage.setPage('"+op.getRecurso()+"')}");
                     item.setAjax(false);
                     item.setUpdate("@all");
                     item.setOutcome(op.getRecurso());
-
-                    //item.setImmediate(true);
-                    submenu.addElement(item);
+                    submenu.getElements().add(item);
                     con2++;
                 }
             }
-            model.addElement(submenu);
+            model.getElements().add(submenu);
 
         }
     }

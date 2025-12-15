@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.GenericaJornadaFlexible;
 import com.aja.jornada.dto.ErrorPrgSercon;
 import com.aja.jornada.model.EmpleadoLiqUtil;
 import com.aja.jornada.model.GenericaJornadaLiqUtil;
-import com.aja.jornada.model.GenericaJornadaTipoLiqUtil;
 import com.aja.jornada.model.ParamAreaLiqUtil;
 import com.dbconnection.Common;
 import com.movilidad.ejb.ConfigFacadeLocal;
@@ -74,14 +68,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import liquidadorjornada.Jornada;
@@ -92,8 +86,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.primefaces.event.ToggleSelectEvent;
@@ -123,9 +116,6 @@ public class GenericaControlJornadaMB implements
     private ParamAreaUsrFacadeLocal paramAreaUserEJB;
 
     @EJB
-    private ParamFeriadoFacadeLocal paraFeEJB;
-
-    @EJB
     private GenericaJornadaFacadeLocal genJornadaEJB;
 
     @EJB
@@ -136,9 +126,6 @@ public class GenericaControlJornadaMB implements
 
     @EJB
     private GenericaJornadaTipoFacadeLocal jornadaTEJB;
-
-    @EJB
-    private ConfigFacadeLocal configEJB;
 
     @EJB
     private GenericaJornadaParamFacadeLocal genJorParamEJB;

@@ -15,9 +15,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -90,8 +90,15 @@ public class AccActaCompromisoManagedBean implements Serializable {
                 String path = ReporteUtil.datosInformeCompromiso(empleado, parametros);
                 File pdf = new File(path);
                 InputStream stream = new FileInputStream(pdf);
-                file = new DefaultStreamedContent(stream, "application/pdf", "Acta-Compromiso_CASO_" + (empleado.getNombres().concat(" ").concat(empleado.getApellidos())).toUpperCase() + "_" + Util.dateFormat(accidente.getFechaAcc()) + ".pdf");
-
+                file = DefaultStreamedContent.builder()
+                        .contentType("application/pdf")
+                        .name("Acta-Compromiso_CASO_"
+                                + (empleado.getNombres() + " " + empleado.getApellidos()).toUpperCase()
+                                + "_" + Util.dateFormat(accidente.getFechaAcc())
+                                + ".pdf")
+                        .stream(() -> stream)
+                        .build();
+                
                 accidente = null;
                 empleado = null;
                 causa = "";

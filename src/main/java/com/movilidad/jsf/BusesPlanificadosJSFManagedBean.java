@@ -18,10 +18,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 
 /**
  * Buses planificados para la operación por tipo día y estacionalidad.

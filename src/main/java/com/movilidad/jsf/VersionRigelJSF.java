@@ -1,9 +1,9 @@
 package com.movilidad.jsf;
 
 import java.io.Serializable;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import com.movilidad.ejb.VersionRigelFacadeLocal;
 import com.movilidad.model.VersionRigel;
 import com.movilidad.utils.MovilidadUtil;
@@ -13,7 +13,7 @@ import com.movilidad.security.UserExtended;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import org.primefaces.event.SelectEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 

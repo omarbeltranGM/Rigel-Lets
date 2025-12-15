@@ -11,13 +11,13 @@ import com.movilidad.model.VehiculoVia;
 import com.movilidad.model.VehiculoViaLog;
 import com.movilidad.security.UserExtended;
 import com.movilidad.utils.MovilidadUtil;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
-import javax.ejb.EJB;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Inject;
 import org.primefaces.event.SelectEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 

@@ -17,9 +17,9 @@ import com.movilidad.security.UserExtended;
 import com.movilidad.utils.MovilidadUtil;
 import java.io.Serializable;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**

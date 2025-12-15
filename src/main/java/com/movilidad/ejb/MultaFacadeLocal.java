@@ -9,7 +9,7 @@ import com.movilidad.model.Multa;
 import com.movilidad.util.beans.MultasCtrl;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

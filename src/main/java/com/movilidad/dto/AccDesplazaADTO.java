@@ -1,6 +1,6 @@
 package com.movilidad.dto;
 
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 /**
  *

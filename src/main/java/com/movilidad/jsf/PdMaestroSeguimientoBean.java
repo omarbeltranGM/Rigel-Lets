@@ -1,6 +1,5 @@
 package com.movilidad.jsf;
 
-import com.genera.xls.GeneraXlsx;
 import com.movilidad.dto.DocumentosPdDTO;
 import com.movilidad.dto.PdPrincipalDTO;
 import com.movilidad.ejb.AccidenteAnalisisFacadeLocal;
@@ -15,8 +14,6 @@ import com.movilidad.ejb.AccidenteVictimaFacadeLocal;
 import com.movilidad.ejb.PdMaestroFacadeLocal;
 import com.movilidad.ejb.PdMaestroSeguimientoFacadeLocal;
 import com.movilidad.model.Accidente;
-import com.movilidad.model.AccidenteLugar;
-import com.movilidad.model.AccidenteLugarDemar;
 import com.movilidad.model.PdMaestro;
 import com.movilidad.model.PdMaestroSeguimiento;
 import com.movilidad.security.UserExtended;
@@ -26,8 +23,6 @@ import com.movilidad.utils.SingletonConfigEmpresa;
 import com.movilidad.utils.Util;
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -35,22 +30,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import org.primefaces.model.DefaultStreamedContent;
 
 /**
@@ -60,24 +53,7 @@ import org.primefaces.model.DefaultStreamedContent;
 @Named(value = "pdMaestroSeguimientoBean")
 @ViewScoped
 public class PdMaestroSeguimientoBean implements Serializable {
-    
-    //Esta sección de importaciones hace parte de generación reporte accidentalidad
-    @EJB
-    private AccidenteLugarFacadeLocal accLugarFacadeLocal;
-    @EJB
-    private AccidenteConductorFacadeLocal accConductorFacadeLocal;
-    @EJB
-    private AccidenteVehiculoFacadeLocal accVehiculoFacadeLocal;
-    @EJB
-    private AccidenteDocumentoFacadeLocal accDocumentoFacadeLocal;
-    @EJB
-    private AccidenteVictimaFacadeLocal accVictimaFacadeLocal;
-    @EJB
-    private AccidentePlanAccionFacadeLocal accPlanAccionFacadeLocal;
-    @EJB
-    private AccidenteTestigoFacadeLocal accTestigoFacadeLocal;
-    @EJB
-    private AccidenteAnalisisFacadeLocal accAnalisisFacadeLocal;
+
     @EJB
     private PdMaestroFacadeLocal pdMaestroEjb;
 
@@ -330,18 +306,22 @@ public class PdMaestroSeguimientoBean implements Serializable {
             Name = Name + ext;
             // Crea un StreamedContent para el archivo
             InputStream inputStream = new ByteArrayInputStream(contenido);
-            archivo = new DefaultStreamedContent(inputStream, tipoMime, Name);
+            archivo = DefaultStreamedContent.builder()
+                    .stream(() -> inputStream)
+                    .contentType(tipoMime)
+                    .name(Name)
+                    .build();
             return archivo;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-    
-    public void generarReporteAccidente(Integer idAccidente) throws FileNotFoundException{
+
+    public void generarReporteAccidente(Integer idAccidente) throws FileNotFoundException {
         accidente = accidenteEjb.find(idAccidente);
     }
-    
+
     public PdMaestro getPdMaestro() {
         return pdMaestro;
     }
@@ -469,8 +449,5 @@ public class PdMaestroSeguimientoBean implements Serializable {
     public void setAccidente(Accidente accidente) {
         this.accidente = accidente;
     }
-    
-    
-       
 
 }

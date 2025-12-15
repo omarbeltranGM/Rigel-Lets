@@ -13,14 +13,14 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.springframework.security.core.context.SecurityContextHolder;
-//import javax.enterprise.context.SessionScoped;
+//import jakarta.enterprise.context.SessionScoped;
 
 @Named("operacionKmTacografoController")
 @ViewScoped

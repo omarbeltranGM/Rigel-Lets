@@ -12,11 +12,11 @@ import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.SingletonConfigEmpresa;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
 import org.primefaces.event.SelectEvent;
 
 /**

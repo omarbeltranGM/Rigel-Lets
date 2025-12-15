@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.primefaces.event.ToggleEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 

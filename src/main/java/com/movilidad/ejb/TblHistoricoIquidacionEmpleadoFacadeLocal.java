@@ -9,7 +9,7 @@ import com.movilidad.model.TblHistoricoIquidacionEmpleado;
 import com.movilidad.util.beans.TblHistoricoLiquidacionEmpleadoDTO;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

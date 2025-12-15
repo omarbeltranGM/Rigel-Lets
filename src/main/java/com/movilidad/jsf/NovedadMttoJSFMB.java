@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.CableCabinaFacadeLocal;
@@ -38,15 +33,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -353,7 +348,11 @@ public class NovedadMttoJSFMB implements Serializable {
         InputStream stream;
         File archivo = new File(path);
         stream = new FileInputStream(archivo);
-        fileDescargar = new DefaultStreamedContent(stream, "video/mp4", retornarNombreVideo(path));
+        fileDescargar = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("video/mp4")
+                .name(retornarNombreVideo(path))
+                .build();
     }
 
     public void handleFileUpload(FileUploadEvent event) {

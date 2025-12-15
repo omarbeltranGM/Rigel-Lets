@@ -14,17 +14,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.movilidad.ejb.PlaRecuBienestarFacadeLocal;
 import com.movilidad.ejb.PlaRecuMotivoFacadeLocal;
@@ -41,12 +41,12 @@ import com.movilidad.model.planificacion_recursos.PlaRecuVacaciones;
 import static com.movilidad.utils.MovilidadUtil.getProperty;
 import java.math.BigDecimal;
 import java.util.Objects;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.primefaces.event.SelectEvent;
 
 /**
  * Clase control que permite dar gestión a los métodos de la tabla
- * planificacion_recursos_ejecucion
+ * planificacion_recursos_bienestar
  *
  * @author Omar.beltran
  */

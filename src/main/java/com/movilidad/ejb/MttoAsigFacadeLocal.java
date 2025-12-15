@@ -9,7 +9,7 @@ import com.movilidad.model.MttoAsig;
 import com.movilidad.util.beans.ResumenAsignadosPorPatio;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

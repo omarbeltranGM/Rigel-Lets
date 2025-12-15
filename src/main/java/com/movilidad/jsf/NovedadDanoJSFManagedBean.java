@@ -49,20 +49,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseId;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -104,8 +104,6 @@ public class NovedadDanoJSFManagedBean implements Serializable {
     private NotificacionCorreoConfFacadeLocal NCCEJB;
     @Inject
     private GopUnidadFuncionalSessionBean unidadFuncionalSessionBean;
-    @Inject
-    private NovedadJSFManagedBean novedaBean;
     @EJB
     private DanoFlotaSolucionValorFacadeLocal danoFlotaSolucionValorFacadeLocal;
     @EJB
@@ -158,14 +156,11 @@ public class NovedadDanoJSFManagedBean implements Serializable {
     List<DanoFlotaComponente> tmpList;
     private Integer editVandalismo;
 
-    private final PrimeFaces current = PrimeFaces.current();
-
     @Inject
     private ValidarFinOperacionBean validarFinOperacionBean;
 
     @PostConstruct
     public void init() {
-//        lista = new ArrayList<>();
         if (!MovilidadUtil.validarUrl("panelPrincipal")) {
             fechaInicio = MovilidadUtil.fechaCompletaHoy();
             fechaFin = MovilidadUtil.fechaCompletaHoy();
@@ -184,7 +179,6 @@ public class NovedadDanoJSFManagedBean implements Serializable {
         this.vehiculoDanoSeveridad = null;
         this.selected = null;
         this.danoFlotaComponente = null;
-//        this.fotosNovedades = new ArrayList<>();
 
         setTecnicoControl();
         lstRutas = prgRouteEjb.getRutas();
@@ -280,26 +274,26 @@ public class NovedadDanoJSFManagedBean implements Serializable {
     }
 
     public void onRowDblClckSelect(final SelectEvent event) {
-        if (event.getObject() instanceof Vehiculo) {
-            setVehiculo((Vehiculo) event.getObject());
+        if (event.getObject() instanceof Vehiculo vehiculo1) {
+            setVehiculo(vehiculo1);
             if (validarUF()) {
                 setVehiculo(null);
             }
         }
-        if (event.getObject() instanceof Empleado) {
-            setEmpleado((Empleado) event.getObject());
+        if (event.getObject() instanceof Empleado empleado1) {
+            setEmpleado(empleado1);
             if (validarUF()) {
                 setEmpleado(null);
             }
         }
-        if (event.getObject() instanceof VehiculoComponenteDano) {
-            setVehiculoComponenteDano((VehiculoComponenteDano) event.getObject());
+        if (event.getObject() instanceof VehiculoComponenteDano vehiculoComponenteDano1) {
+            setVehiculoComponenteDano(vehiculoComponenteDano1);
         }
-        if (event.getObject() instanceof VehiculoComponente) {
-            setVehiculoComponente((VehiculoComponente) event.getObject());
+        if (event.getObject() instanceof VehiculoComponente vehiculoComponente1) {
+            setVehiculoComponente(vehiculoComponente1);
         }
-        if (event.getObject() instanceof VehiculoDanoSeveridad) {
-            setVehiculoDanoSeveridad((VehiculoDanoSeveridad) event.getObject());
+        if (event.getObject() instanceof VehiculoDanoSeveridad vehiculoDanoSeveridad1) {
+            setVehiculoDanoSeveridad(vehiculoDanoSeveridad1);
         }
     }
 
@@ -427,7 +421,6 @@ public class NovedadDanoJSFManagedBean implements Serializable {
         }
 
         novedadUtil.guardarNovedadDano(novedadDano);
-        //getByDateRange();
         piezas = "";
         flagSelectedPiezas = false;
         if (modulo) {
@@ -520,7 +513,7 @@ public class NovedadDanoJSFManagedBean implements Serializable {
                     try {
 
                         return Util.mostrarImagen(nombre_imagen, path);
-                    } catch (Exception e) {
+                    } catch (IOException e) {
 //                        System.out.println(e.getMessage());
 
                     }
@@ -612,7 +605,6 @@ public class NovedadDanoJSFManagedBean implements Serializable {
         String correoMaster = "";
         if (novedadDano.getIdEmpleado().getPmGrupoDetalleList().size() == 1) {
             correoMaster = novedadDano.getIdEmpleado().getPmGrupoDetalleList().get(0).getIdGrupo().getIdEmpleado().getEmailCorporativo();
-//            System.out.println("máster: " + correoMaster);
         }
         NotificacionProcesos notificacionProcesos = notificacionProcesosEjb.findByCodigo(Util.ID_DANOS_NOTI_PROC);
         destinatarios = novedadDano.getIdEmpleado() != null ? correoMaster + "," + novedadDano.getIdEmpleado().getEmailCorporativo() : "";

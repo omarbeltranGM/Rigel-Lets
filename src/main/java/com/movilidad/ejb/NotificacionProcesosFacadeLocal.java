@@ -8,7 +8,7 @@ package com.movilidad.ejb;
 import com.movilidad.model.Empleado;
 import com.movilidad.model.NotificacionProcesos;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

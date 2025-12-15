@@ -9,7 +9,7 @@ import com.movilidad.model.GenericaJornadaDet;
 import com.movilidad.model.PrgSerconDet;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

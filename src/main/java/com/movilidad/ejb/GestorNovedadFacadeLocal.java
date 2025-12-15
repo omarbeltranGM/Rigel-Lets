@@ -9,7 +9,7 @@ import com.movilidad.model.GestorNovedad;
 import com.movilidad.model.Novedad;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

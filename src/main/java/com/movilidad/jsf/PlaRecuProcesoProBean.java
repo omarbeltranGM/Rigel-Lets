@@ -10,10 +10,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.movilidad.ejb.PlaRecuProcesoProFacadeLocal;
 import com.movilidad.model.GopUnidadFuncional;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 
 @Named(value = "planRecuProcesoProBean")

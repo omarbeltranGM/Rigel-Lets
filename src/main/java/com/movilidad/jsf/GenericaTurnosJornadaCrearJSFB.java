@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.EmpleadoFacadeLocal;
@@ -28,11 +23,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+
 import org.primefaces.component.timeline.Timeline;
 import org.primefaces.component.timeline.TimelineUpdater;
 import org.primefaces.model.timeline.TimelineEvent;
@@ -139,8 +134,16 @@ public class GenericaTurnosJornadaCrearJSFB implements Serializable {
             }
             String start = Util.dateFormat(gpj.getFecha()) + " " + horaInicio;
             String end = Util.dateFormat(gpj.getFecha()) + " " + horaFin;
+            
             // create an event with content, fechaDesde / fechaHasta dates, editable flag, group name and custom style class
-            TimelineEvent event = new TimelineEvent(gpj, Util.dateTimeFormat(start), Util.dateTimeFormat(end), true, nombreByGenericaJornada(gpj), css);
+            TimelineEvent<GenericaPrgJornada> event = TimelineEvent.<GenericaPrgJornada>builder()
+                    .data(gpj)
+                    .startDate(Util.stringToLocalDateTime(start))
+                    .endDate(Util.stringToLocalDateTime(end))
+                    .editable(true)
+                    .group(nombreByGenericaJornada(gpj))
+                    .styleClass(css)
+                    .build();
             model.add(event);
         }
     }
@@ -443,9 +446,8 @@ public class GenericaTurnosJornadaCrearJSFB implements Serializable {
         Timeline source = (Timeline) event.getSource();
         TimelineUpdater timelineUpdater = TimelineUpdater.getCurrentInstance(source.getClientId());
         TimelineEvent timelineEvent = event.getTimelineEvent();
-        int index = model.getIndex(timelineEvent);
+        model.update(timelineEvent, timelineUpdater);
         timelineEvent.setData("Changed");
-        timelineUpdater.update(timelineEvent, index);
     }
 
     public Date getFechaDesde() {

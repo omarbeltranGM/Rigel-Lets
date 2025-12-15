@@ -7,10 +7,10 @@ package com.movilidad.ejb;
 
 import com.movilidad.model.VehiculoTipoEstado;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 /**
  *
@@ -57,7 +57,7 @@ public class VehiculoTipoEstadoFacade extends AbstractFacade<VehiculoTipoEstado>
         }
     }
     
-    //Trae los estados de vehiculo con id 2 y 3 los cuales seran utilizados para filtrar en la lista "Bitácora de Disponibilidad MTTO".
+    //Trae los estados de vehiculo con id 2 y 3 los cuales seran utilizados para filtrar en la lista "Bitacora de Disponibilidad MTTO".
     @Override
     public List<VehiculoTipoEstado> findEstadosVehiculoBitacora() {
         Query q = em.createQuery(

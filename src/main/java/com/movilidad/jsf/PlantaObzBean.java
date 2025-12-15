@@ -16,13 +16,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -49,7 +49,6 @@ public class PlantaObzBean implements Serializable {
     private List<PlantaObz> lista;
     private List<HoraPrgEjecDTO> listaHorasEjecutadas;
     private EmpleadoDocumentos empleadoDocumento;
-    private EmpleadoDocumentoJSFManagedBean empleadoDocumentosBean;
 
     private Date desde = MovilidadUtil.fechaHoy();
     private Date hasta = MovilidadUtil.fechaHoy();
@@ -95,7 +94,11 @@ public class PlantaObzBean implements Serializable {
         File filee = new File(path);
         InputStream input = new FileInputStream(filee);
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        return new DefaultStreamedContent(input, externalContext.getMimeType(filee.getName()), filee.getName());
+        return DefaultStreamedContent.builder()
+                .stream(() -> input)
+                .contentType(externalContext.getMimeType(filee.getName()))
+                .name(filee.getName())
+                .build();
     }
 
     public static StreamedContent obtenerPDF(String rutaArchivo) throws IOException {
@@ -104,7 +107,11 @@ public class PlantaObzBean implements Serializable {
         InputStream inputStream = new FileInputStream(archivo);
 
         // Crea un objeto StreamedContent a partir del InputStream del archivo PDF
-        StreamedContent file = new DefaultStreamedContent(inputStream, "application/pdf", archivo.getName());
+        StreamedContent file = DefaultStreamedContent.builder()
+                .stream(() -> inputStream)
+                .contentType("application/pdf")
+                .name(archivo.getName())
+                .build();
 
         return file;
     }

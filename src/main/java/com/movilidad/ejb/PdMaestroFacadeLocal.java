@@ -11,7 +11,7 @@ import com.movilidad.dto.PdReporteNovedadesDTO;
 import com.movilidad.model.PdMaestro;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

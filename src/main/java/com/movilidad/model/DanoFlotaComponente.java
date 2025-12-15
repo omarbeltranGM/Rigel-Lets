@@ -9,9 +9,9 @@ package com.movilidad.model;
  * @author julian.arevalo
  */
 import java.io.Serializable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "dano_flota_componente")

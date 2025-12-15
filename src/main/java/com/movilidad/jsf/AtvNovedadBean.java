@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.AtvTipoAtencionFacadeLocal;
@@ -19,10 +14,10 @@ import com.movlidad.httpUtil.SenderAtvNovedad;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import org.primefaces.json.JSONObject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import org.json.JSONObject;
 
 /**
  *

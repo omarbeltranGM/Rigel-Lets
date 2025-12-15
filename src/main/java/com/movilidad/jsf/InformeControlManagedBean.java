@@ -1,13 +1,11 @@
 package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
-import com.movilidad.ejb.GopUnidadFuncionalFacadeLocal;
 import com.movilidad.ejb.MultaFacadeLocal;
 import com.movilidad.ejb.NovedadFacadeLocal;
 import com.movilidad.ejb.PrgTcFacadeLocal;
 import com.movilidad.ejb.PrgTcResumenFacadeLocal;
 import com.movilidad.ejb.VehiculoFacadeLocal;
-import com.movilidad.model.GopUnidadFuncional;
 import com.movilidad.model.PrgTcResumen;
 import com.movilidad.util.beans.AccidenteCtrl;
 import com.movilidad.util.beans.InformeControl;
@@ -30,12 +28,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -294,7 +293,11 @@ public class InformeControlManagedBean implements Serializable {
         File excel = new File(destino);
         readFormula(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "Informe_Control.xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("Informe_Control.xlsx")
+                .build();
         PrimeFaces.current().ajax().update("frmInfoControl");
         MovilidadUtil.addSuccessMessage("Reporte generado exitósamente");
     }
@@ -306,8 +309,7 @@ public class InformeControlManagedBean implements Serializable {
         for (Sheet sheet : wb) {
             for (Row r : sheet) {
                 for (Cell c : r) {
-                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-//                        System.out.println(c.getAddress() + ":" + c.getCellFormula());
+                    if (c.getCellType() == CellType.FORMULA) {
                         evaluator.evaluateFormulaCell(c);
                         c.setCellFormula(c.getCellFormula());
                     }

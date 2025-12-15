@@ -20,15 +20,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.movilidad.utils.SingletonConfigEmpresa;
 import java.util.HashMap;
@@ -120,7 +120,7 @@ public class AccidenteDocumentoJSF implements Serializable {
                     accidenteDocumento.setIdAccTipoDocs(new AccTipoDocs(i_idAccTipoDocs));
                     accidenteDocumentoFacadeLocal.create(accidenteDocumento);
                     if (file != null) {
-                        if (file.getContents().length > 0) {
+                        if (file.getSize() > 0) {
                             String path = MovilidadUtil.cargarArchivosAccidentalidad(file, i_idAccidente, "Documentos", accidenteDocumento.getIdAccidenteDocumento(), accidenteDocumento.getIdAccTipoDocs().getTipoDocs());
                             accidenteDocumento.setPath(path);
                             accidenteDocumentoFacadeLocal.edit(accidenteDocumento);
@@ -188,7 +188,7 @@ public class AccidenteDocumentoJSF implements Serializable {
                     return;
                 }
                 if (file != null) {
-                    if (file.getContents().length > 0) {
+                    if (file.getSize() > 0) {
                         String path = MovilidadUtil.cargarArchivosAccidentalidad(file, i_idAccidente, "Documentos", accidenteDocumento.getIdAccidenteDocumento(), accidenteDocumento.getIdAccTipoDocs().getTipoDocs());
                         accidenteDocumento.setPath(path);
                     }
@@ -259,7 +259,7 @@ public class AccidenteDocumentoJSF implements Serializable {
 
     public void handleFileUpload(FileUploadEvent event) {
         file = event.getFile();
-        if (file.getContents().length > 0) {
+        if (file.getSize() > 0) {
             MovilidadUtil.addSuccessMessage("Archivo cargado correctamente");
             PrimeFaces.current().executeScript("PF('documentoDlg').hide();");
             PrimeFaces.current().ajax().update("tabView:form-carga-documento");

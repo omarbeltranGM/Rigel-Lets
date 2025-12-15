@@ -8,10 +8,10 @@ import com.movilidad.utils.MovilidadUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 

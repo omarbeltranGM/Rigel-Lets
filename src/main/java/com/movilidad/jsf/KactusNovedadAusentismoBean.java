@@ -27,10 +27,10 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.xml.datatype.DatatypeConfigurationException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.xml.datatype.DatatypeConfigurationException;
 
 /**
  *

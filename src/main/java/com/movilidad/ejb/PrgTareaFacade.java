@@ -9,10 +9,10 @@ import com.movilidad.model.PrgTarea;
 import com.movilidad.utils.ConstantsUtil;
 import com.movilidad.utils.SingletonConfigEmpresa;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 /**
  *

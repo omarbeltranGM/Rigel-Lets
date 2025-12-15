@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.dto.AccDesplazaADTO;
@@ -25,28 +20,21 @@ import com.movilidad.model.Accidente;
 import com.movilidad.model.PrgTc;
 import com.movilidad.utils.ConstantsUtil;
 import com.movilidad.utils.MovilidadUtil;
-import com.movilidad.utils.Util;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import org.primefaces.PrimeFaces;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
-import org.primefaces.model.chart.HorizontalBarChartModel;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 

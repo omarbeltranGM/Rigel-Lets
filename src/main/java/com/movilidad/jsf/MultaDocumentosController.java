@@ -13,14 +13,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Named("multaDocumentosController")
@@ -41,8 +41,6 @@ public class MultaDocumentosController implements Serializable {
 
     @Inject
     private UploadFotoJSFManagedBean uploadFotoMB;
-
-    //----
     private int i_idMulta;
     private int i_idMultaTipoDocumento;
 
@@ -217,7 +215,6 @@ public class MultaDocumentosController implements Serializable {
     public void setFileList(List<UploadedFile> fileList) {
         this.fileList = fileList;
     }
-
 
     public List<MultaDocumentos> getItems() {
         return items;

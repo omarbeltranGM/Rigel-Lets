@@ -2,7 +2,7 @@ package com.movilidad.util.beans;
 
 import com.movilidad.model.MarcacionDocumentos;
 import java.io.Serializable;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  * Omar Beltrán

@@ -15,19 +15,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.transaction.Transactional;
-import org.apache.poi.ss.usermodel.Cell;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  *
@@ -86,15 +86,15 @@ public class VehiculoOdometroManagedBean implements Serializable {
                         Cell celda = fila.getCell(b);
                         if (celda != null) {
 
-                            switch (celda.getCellTypeEnum().toString()) {
-                                case "NUMERIC":
+                            switch (celda.getCellType()) {
+                                case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(celda)) {
                                         auxDate = celda.getDateCellValue();
                                     } else {
                                         auxKm = celda.getNumericCellValue();
                                     }
                                     break;
-                                case "STRING":
+                                case STRING:
                                     auxCodigo = celda.getStringCellValue();
                                     break;
                             }

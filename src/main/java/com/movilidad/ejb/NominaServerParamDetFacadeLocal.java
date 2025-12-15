@@ -7,7 +7,7 @@ package com.movilidad.ejb;
 
 import com.movilidad.model.NominaServerParamDet;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

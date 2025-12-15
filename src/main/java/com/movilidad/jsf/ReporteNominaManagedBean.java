@@ -12,7 +12,6 @@ import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.Util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,13 +26,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.primefaces.model.DefaultStreamedContent;
@@ -286,7 +283,6 @@ public class ReporteNominaManagedBean implements Serializable {
 //                workbook.setSheetName(sheetIndex, i_unidad_funcional != 0 ? (i_unidad_funcional == 1 ? "RESUMEN ZMO III" : "RESUMEN ZMO V") : "");
 //            }
 
-            
             Workbook workbook = WorkbookFactory.create(fis);
             //se asigna nombre a la primer hoja de cálculo
             workbook.setSheetName(0, i_unidad_funcional != 0 ? (i_unidad_funcional == 1 ? "RESUMEN ZMO III" : "RESUMEN ZMO V") : "");
@@ -297,10 +293,18 @@ public class ReporteNominaManagedBean implements Serializable {
 
             // Crear el StreamedContent a partir del ByteArrayOutputStream
             try (InputStream stream = new ByteArrayInputStream(baos.toByteArray())) {
-                file = new DefaultStreamedContent(stream, "application/vnd.ms-excel", "RESUMEN_FORTIUS_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xls");
+                file = DefaultStreamedContent.builder()
+                        .stream(() -> stream)
+                        .contentType("application/vnd.ms-excel")
+                        .name("RESUMEN_FORTIUS_" 
+                            + Util.dateFormat(fecha_inicio) 
+                            + "_al_" 
+                            + Util.dateFormat(fecha_fin) 
+                            + ".xls")
+                        .build();
             }
 
-        } catch (IOException | InvalidFormatException | EncryptedDocumentException ex) {
+        } catch (IOException | EncryptedDocumentException ex) {
             Logger.getLogger(ReporteNominaManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

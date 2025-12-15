@@ -8,7 +8,7 @@ package com.movilidad.ejb;
 import com.movilidad.model.PdResponsables;
 import com.movilidad.model.ReporteSemanaActualMotivo;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

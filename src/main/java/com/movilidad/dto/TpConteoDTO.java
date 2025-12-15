@@ -7,7 +7,7 @@ package com.movilidad.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 /**
  *

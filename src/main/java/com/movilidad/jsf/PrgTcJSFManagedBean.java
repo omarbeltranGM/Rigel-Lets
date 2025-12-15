@@ -14,7 +14,6 @@ import com.movilidad.ejb.NovedadFacadeLocal;
 import com.movilidad.ejb.NovedadPrgTcFacadeLocal;
 import com.movilidad.ejb.NovedadTipoDetallesFacadeLocal;
 import com.movilidad.ejb.NovedadTipoFacadeLocal;
-import com.movilidad.ejb.ParamAreaUsrFacadeLocal;
 import com.movilidad.ejb.ParamCierreAusentismoFacadeLocal;
 import com.movilidad.ejb.PrgPatternFacadeLocal;
 import com.movilidad.ejb.PrgRouteFacadeLocal;
@@ -67,7 +66,7 @@ import com.movilidad.utils.UtilJornada;
 import com.movlidad.httpUtil.GeoService;
 import com.movlidad.httpUtil.SenderNotificacionTelegram;
 import java.io.IOException;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -84,16 +83,16 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.json.JSONObject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.springframework.security.core.GrantedAuthority;
@@ -382,9 +381,7 @@ public class PrgTcJSFManagedBean implements Serializable {
     private GestorVehiculosDisponiblesJSF gestorVehiculosDisponiblesJSF;
     @Inject
     private AsignarBusToServbusBean asignarBusToServbusBean;
-    @EJB
-    private ParamAreaUsrFacadeLocal paramAreaUserEJB;
-     
+
     /**
      * responsable de verificar si las novedades que tenga tipo detalle novedad
      * que afecten programa master se guarden como proceden si o no.
@@ -528,12 +525,13 @@ public class PrgTcJSFManagedBean implements Serializable {
      */
     public void onNodeSelectOperador(NodeSelectEvent event) throws ParseException {
         if (event.getTreeNode().getData() instanceof ArbolViewPrgTc) {
-            ArbolViewPrgTc tree = (ArbolViewPrgTc) event.getTreeNode().getData();
+            TreeNode<ArbolViewPrgTc> node = (TreeNode<ArbolViewPrgTc>) event.getTreeNode();
+            ArbolViewPrgTc tree = node.getData();
             /**
              * El nivel indica que hijo del arbol se ha seleccionado.
              */
             if (tree.getNivel() == 1) {
-                for (TreeNode tn : event.getTreeNode().getChildren()) {
+                for (TreeNode<ArbolViewPrgTc> tn : node.getChildren()) {
                     ArbolViewPrgTc at = (ArbolViewPrgTc) tn.getData();
                     listPrgTcGestionOperador.remove(at.getObjPrgTc());
                     listDesasignarOpServNull.remove(at.getObjPrgTc());
@@ -571,12 +569,16 @@ public class PrgTcJSFManagedBean implements Serializable {
      */
     public void onNodeSelectSinOperador(NodeSelectEvent event) throws ParseException {
         if (event.getTreeNode().getData() instanceof ArbolViewPrgTc) {
-            ArbolViewPrgTc tree = (ArbolViewPrgTc) event.getTreeNode().getData();
+            /**
+             * El nivel indica que hijo del arbol se ha seleccionado.
+             */
+            TreeNode<ArbolViewPrgTc> node = (TreeNode<ArbolViewPrgTc>) event.getTreeNode();
+            ArbolViewPrgTc tree = node.getData();
             /**
              * El nivel indica que hijo del arbol se ha seleccionado.
              */
             if (tree.getNivel() == 1) {
-                for (TreeNode tn : event.getTreeNode().getChildren()) {
+                for (TreeNode<ArbolViewPrgTc> tn : node.getChildren()) {
                     ArbolViewPrgTc at = (ArbolViewPrgTc) tn.getData();
                     listPrgTcGestionOperador.remove(at.getObjPrgTc());
                     listPrgTcGestionOperador.add(at.getObjPrgTc());
@@ -951,14 +953,16 @@ public class PrgTcJSFManagedBean implements Serializable {
      */
     public void onNodeSelectVehiculo(NodeSelectEvent event) throws ParseException {
         if (event.getTreeNode().getData() instanceof ArbolViewPrgTc) {
-            ArbolViewPrgTc tree = (ArbolViewPrgTc) event.getTreeNode().getData();
+            TreeNode<ArbolViewPrgTc> node = (TreeNode<ArbolViewPrgTc>) event.getTreeNode();
+            ArbolViewPrgTc tree = node.getData();
+
             /**
              * El nivel indica que hijo del arbol se ha seleccionado.
              */
             switch (tree.getNivel()) {
                 case 1:
-                    for (TreeNode tn : event.getTreeNode().getChildren()) {
-                        for (TreeNode tnn : tn.getChildren()) {
+                    for (TreeNode<ArbolViewPrgTc> tn : node.getChildren()) {
+                        for (TreeNode<ArbolViewPrgTc> tnn : tn.getChildren()) {
                             ArbolViewPrgTc at = (ArbolViewPrgTc) tnn.getData();
                             listPrgTcGestionVehiculo.remove(at.getObjPrgTc());
                             listPrgTcGestionVehiculo.add(at.getObjPrgTc());
@@ -966,7 +970,7 @@ public class PrgTcJSFManagedBean implements Serializable {
                     }
                     break;
                 case 2:
-                    for (TreeNode tnn : event.getTreeNode().getChildren()) {
+                    for (TreeNode<ArbolViewPrgTc> tnn : node.getChildren()) {
                         ArbolViewPrgTc at = (ArbolViewPrgTc) tnn.getData();
                         if (at.getObjPrgTc().getSercon().equals(tree.getObjPrgTc().getSercon())) {
                             listPrgTcGestionVehiculo.remove(at.getObjPrgTc());
@@ -995,14 +999,16 @@ public class PrgTcJSFManagedBean implements Serializable {
      */
     public void onNodeSelectEliminar(NodeSelectEvent event) throws ParseException {
         if (event.getTreeNode().getData() instanceof ArbolViewPrgTc) {
-            ArbolViewPrgTc tree = (ArbolViewPrgTc) event.getTreeNode().getData();
+            TreeNode<ArbolViewPrgTc> node = (TreeNode<ArbolViewPrgTc>) event.getTreeNode();
+            ArbolViewPrgTc tree = node.getData();
+
             /**
              * El nivel indica que hijo del arbol se ha seleccionado.
              */
             switch (tree.getNivel()) {
                 case 1:
-                    for (TreeNode tn : event.getTreeNode().getChildren()) {
-                        for (TreeNode tnn : tn.getChildren()) {
+                    for (TreeNode<ArbolViewPrgTc> tn : node.getChildren()) {
+                        for (TreeNode<ArbolViewPrgTc> tnn : tn.getChildren()) {
                             ArbolViewPrgTc at = (ArbolViewPrgTc) tnn.getData();
                             listPrgTcGestionEliminar.remove(at);
                             listPrgTcGestionEliminar.add(at);
@@ -1016,7 +1022,7 @@ public class PrgTcJSFManagedBean implements Serializable {
                     }
                     break;
                 case 2:
-                    for (TreeNode tnn : event.getTreeNode().getChildren()) {
+                    for (TreeNode<ArbolViewPrgTc> tnn : node.getChildren()) {
                         ArbolViewPrgTc at = (ArbolViewPrgTc) tnn.getData();
                         if (at.getObjPrgTc().getSercon().equals(tree.getObjPrgTc().getSercon())) {
                             listPrgTcGestionEliminar.remove(at);
@@ -2010,7 +2016,7 @@ public class PrgTcJSFManagedBean implements Serializable {
 //            MovilidadUtil.addErrorMessage("Boton deshabilitado");
 //        }
     }
-    
+
     /**
      * Validar que los datos básicos requeridos de la novedad, esten
      * diligenciados y ademas valida si el Empleado ya tiene novedad similar
@@ -2047,7 +2053,6 @@ public class PrgTcJSFManagedBean implements Serializable {
                         SingletonConfigEmpresa.getMapConfiMapEmpresa()
                                 .get(ConstantsUtil.KEY_ID_NOV_AUSENTISMO)))) {
 
-            novedad.setParamArea(paramAreaUserEJB.getByIdUser(user.getUsername()).getIdParamArea());
             ParamCierreAusentismo cierreAusentismo = paramCierreAusentismoEjb.buscarPorRangoFechasYUnidadFuncional(
                     prgTc.getFecha(), prgTc.getFecha(),
                     prgTc.getIdEmpleado().getIdGopUnidadFuncional().getIdGopUnidadFuncional());
@@ -6502,16 +6507,16 @@ public class PrgTcJSFManagedBean implements Serializable {
                         lstClasificacion.add(s);
                     }
                 } else {
-                    if (s.getEstadoReg().equals(0) && 
-                        Arrays.asList(1, 2, 3, 4, 5).contains(s.getIdPrgClasificacionMotivo())) { // se deben permitir esas clasificaciones
-                            // 1 Responsable Mantenimiento y clasificación Mtto
-                            // 2 Responsable Operaciones y clasificación Operaciones
-                            // 3 Responsable Operaciones y clasificación Ausencia Operador
-                            // 4 Responsable Transmilenio y clasificación Eliminado
-                            // 5 Responsable Operaciones y clasificación Perdido
-                            // lo anterior se hace debido a que no se pueden dejar en la tabla de BD estado_reg = 1 dado que genera error en otros reportes
-                    lstClasificacion.add(s);
-                }
+                    if (s.getEstadoReg().equals(0)
+                            && Arrays.asList(1, 2, 3, 4, 5).contains(s.getIdPrgClasificacionMotivo())) { // se deben permitir esas clasificaciones
+                        // 1 Responsable Mantenimiento y clasificación Mtto
+                        // 2 Responsable Operaciones y clasificación Operaciones
+                        // 3 Responsable Operaciones y clasificación Ausencia Operador
+                        // 4 Responsable Transmilenio y clasificación Eliminado
+                        // 5 Responsable Operaciones y clasificación Perdido
+                        // lo anterior se hace debido a que no se pueden dejar en la tabla de BD estado_reg = 1 dado que genera error en otros reportes
+                        lstClasificacion.add(s);
+                    }
                 }
             }
         }

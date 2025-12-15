@@ -7,8 +7,8 @@ package com.movilidad.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 
 /**
  *

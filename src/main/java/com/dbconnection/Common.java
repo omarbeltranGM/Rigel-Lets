@@ -1,6 +1,5 @@
 package com.dbconnection;
 
-import com.movilidad.utils.Util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,11 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author stevenlizarazo
@@ -21,10 +15,9 @@ public class Common {
 
     public static int inited = 0;
 
-    // PRUEBAS --> private static final String host = "10.0.3.34";
-    private static final String host = "10.0.3.138";
-    private static final String db = "rgmo";
-    private static final String pwd = ".*R1g3l2021GMO//*";
+    private static final String host = "10.0.2.131";
+    private static final String db = "rlmo";
+    private static final String pwd = ".*R1g3l2025LMO//*";
     private static final String user = "green_usr";
 
     public static void initDriver() {

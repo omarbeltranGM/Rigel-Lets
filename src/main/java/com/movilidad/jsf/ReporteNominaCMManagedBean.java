@@ -10,9 +10,7 @@ import com.movilidad.model.EmpleadoCargoCosto;
 import com.movilidad.model.ParamArea;
 import com.movilidad.model.ParamCargoCc;
 import com.movilidad.model.ParamReporteHoras;
-import com.movilidad.util.beans.ReporteHoras;
 import com.movilidad.util.beans.ReporteHorasCM;
-import com.movilidad.util.beans.ReporteHorasExcel;
 import com.movilidad.util.beans.ReporteNominaCM;
 import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.Util;
@@ -29,10 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import org.primefaces.PrimeFaces;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -360,7 +357,15 @@ public class ReporteNominaCMManagedBean implements Serializable {
         File excel = new File(destino);
         MovilidadUtil.addSuccessMessage("Reporte generado éxitosamente");
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "NÓMINA_CABLEMÓVIL_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("NÓMINA_CABLEMÓVIL_" 
+                        + Util.dateFormat(fecha_inicio) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin) 
+                        + ".xlsx")
+                .build();
     }
 
     private int obtenerMes(Date fecha) {

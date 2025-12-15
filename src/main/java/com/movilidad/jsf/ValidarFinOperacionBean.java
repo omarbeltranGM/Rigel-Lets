@@ -16,9 +16,9 @@ import com.movilidad.utils.ObjetoSigleton;
 import com.movilidad.utils.Util;
 import java.io.Serializable;
 import java.util.Date;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 
 /**
  *

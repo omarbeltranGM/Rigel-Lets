@@ -14,10 +14,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.springframework.security.core.context.SecurityContextHolder;
 

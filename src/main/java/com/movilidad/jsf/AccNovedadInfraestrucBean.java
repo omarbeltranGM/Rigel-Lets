@@ -40,21 +40,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
@@ -491,15 +491,24 @@ public class AccNovedadInfraestrucBean implements Serializable {
         if (i > 0) {
             fe = path.substring(i + 1).toLowerCase();
             switch (fe) {
-                case "mp4":
+                case "mp4" -> {
                     stream = new FileInputStream(archivo);
-                    fileDescargar = new DefaultStreamedContent(stream, "video/mp4", nombreArchivo);
-                    break;
-                default:
+                    fileDescargar = DefaultStreamedContent.builder()
+                            .stream(() -> stream)
+                            .contentType("video/mp4")
+                            .name(nombreArchivo)
+                            .build();
+                }
+                default -> {
                     stream = new FileInputStream(archivo);
-                    fileDescargar = new DefaultStreamedContent(stream, tipoArchivo, nombreArchivo);
-                    break;
+                    fileDescargar = DefaultStreamedContent.builder()
+                            .stream(() -> stream)
+                            .contentType(tipoArchivo) // ejemplo: application/pdf, image/png, etc.
+                            .name(nombreArchivo)
+                            .build();
+                }
             }
+
         }
     }
 

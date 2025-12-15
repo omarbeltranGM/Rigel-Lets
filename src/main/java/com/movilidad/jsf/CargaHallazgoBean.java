@@ -32,18 +32,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  *
@@ -226,8 +227,8 @@ public class CargaHallazgoBean implements Serializable {
 
                     if (row.getRowNum() >= 2) {
 
-                        switch (cell.getCellTypeEnum().toString()) {
-                            case "NUMERIC":
+                        switch (cell.getCellType()) {
+                            case NUMERIC:
 
                                 if (cell.getColumnIndex() == 0) {
                                     hallazgo.setConsecutivo((int) row.getCell(0).getNumericCellValue());
@@ -244,7 +245,7 @@ public class CargaHallazgoBean implements Serializable {
 
                                 break;
 
-                            case "STRING":
+                            case STRING:
 
                                 if (cell.getColumnIndex() == 2) {
 

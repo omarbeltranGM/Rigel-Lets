@@ -5,9 +5,6 @@ import com.movilidad.ejb.GenericaJornadaFacadeLocal;
 import com.movilidad.ejb.ParamAreaFacadeLocal;
 import com.movilidad.model.ParamArea;
 import com.movilidad.util.beans.PrenominaCAM;
-import com.movilidad.util.beans.ReporteHoras;
-import com.movilidad.util.beans.ReporteHorasExcel;
-import com.movilidad.util.beans.ReporteInterventoria;
 import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.Util;
 import java.io.File;
@@ -15,16 +12,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -89,7 +85,15 @@ public class ReportePrenominaCAMBean implements Serializable {
         File excel = new File(destino);
         MovilidadUtil.addSuccessMessage("Reporte generado éxitosamente");
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "PRENOMINA_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("PRENOMINA_" 
+                        + Util.dateFormat(fecha_inicio) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin) 
+                        + ".xlsx")
+                .build();
     }
 
     public Locale getLocale() {

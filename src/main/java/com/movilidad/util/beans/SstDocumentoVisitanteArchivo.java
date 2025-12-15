@@ -2,7 +2,7 @@ package com.movilidad.util.beans;
 
 import com.movilidad.model.SstEmpresaVisitanteDocs;
 import java.io.Serializable;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *

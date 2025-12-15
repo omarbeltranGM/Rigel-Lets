@@ -1,7 +1,6 @@
 package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
-import com.movilidad.ejb.GopUnidadFuncionalFacadeLocal;
 import com.movilidad.ejb.IncapacidadDxFacadeLocal;
 import com.movilidad.ejb.IncapacidadOrdenaFacadeLocal;
 import com.movilidad.ejb.IncapacidadTipoFacadeLocal;
@@ -12,7 +11,6 @@ import com.movilidad.ejb.NovedadTipoDocumentosFacadeLocal;
 import com.movilidad.ejb.ParamAreaFacadeLocal;
 import com.movilidad.ejb.ParamAreaUsrFacadeLocal;
 import com.movilidad.model.Empleado;
-import com.movilidad.model.GopUnidadFuncional;
 import com.movilidad.model.IncapacidadDx;
 import com.movilidad.model.IncapacidadOrdena;
 import com.movilidad.model.IncapacidadTipo;
@@ -42,18 +40,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -148,11 +146,11 @@ public class AusentismosManagedBean implements Serializable {
         flagTC = validarRol("ROLE_TC");//validar rol de técnico de control
         flagSST = validarRol("SST"); //validar rol seguridad y salud en el trabajo
     }
-    
+
     private void obtenerAreasParametrizadas() {
         listParamArea = paramAreaEJB.findAllEstadoReg();
     }
-    
+
     /**
      * Retorna el identificador del área del usuario en sesión
      *
@@ -170,24 +168,24 @@ public class AusentismosManagedBean implements Serializable {
 
     public void getByDateRange() {
         PrimeFaces.current().executeScript("PF('dtNovedades').clearFilters()");
-        this.lista = novedadEjb.findAusentismosByDateRangeAndIdArea(fechaInicio, fechaFin, 
-                unidadFuncionalSessionBean.obtenerIdGopUnidadFuncional(), flagSST ? 0 : idArea == 0 ? id_area_param :idArea);
-        if(lista.isEmpty()) {
+        this.lista = novedadEjb.findAusentismosByDateRangeAndIdArea(fechaInicio, fechaFin,
+                unidadFuncionalSessionBean.obtenerIdGopUnidadFuncional(), flagSST ? 0 : idArea == 0 ? id_area_param : idArea);
+        if (lista.isEmpty()) {
             MovilidadUtil.addSuccessMessage("No hay registros del área seleccionada en el rango de fechas dado");
         }
     }
-    
+
     public void getByArea() {
         PrimeFaces.current().executeScript("PF('dtNovedades').clearFilters()");
-        this.lista = novedadEjb.findAusentismosByDateRangeAndIdArea(fechaInicio, fechaFin, 
+        this.lista = novedadEjb.findAusentismosByDateRangeAndIdArea(fechaInicio, fechaFin,
                 unidadFuncionalSessionBean.obtenerIdGopUnidadFuncional(), flagSST ? id_area_param != null ? id_area_param : 0 : idArea);
     }
 
-    public String identificacion (Empleado obj) {
-        return obj.getIdEmpleadoCargo().getIdEmpleadoTipoCargo() == 1 ? obj.getCodigoTm().toString() : 
-                obj.getIdEmpleadoCargo().getIdEmpleadoTipoCargo() == 58 ? obj.getCodigoTm().toString() : obj.getIdentificacion();
+    public String identificacion(Empleado obj) {
+        return obj.getIdEmpleadoCargo().getIdEmpleadoTipoCargo() == 1 ? obj.getCodigoTm().toString()
+                : obj.getIdEmpleadoCargo().getIdEmpleadoTipoCargo() == 58 ? obj.getCodigoTm().toString() : obj.getIdentificacion();
     }
-    
+
     public void addObservacion() {
         IncapacidadDx dx = incapacidadDxEjb.find(i_Diagnostico);
         novedadIncapacidad.setObservaciones(dx.getCodigo() + " - " + dx.getDescripcion());
@@ -236,7 +234,16 @@ public class AusentismosManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        archivo = new DefaultStreamedContent(stream, "text/plain", "Informe_Incapacidades_" + Util.dateFormat(fechaInicio) + "_al_" + Util.dateFormat(fechaFin) + ".xlsx");
+        archivo = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .name("Informe_Incapacidades_"
+                        + Util.dateFormat(fechaInicio)
+                        + "_al_"
+                        + Util.dateFormat(fechaFin)
+                        + ".xlsx")
+                .build();
+
     }
 
     public int calcularDias() {
@@ -848,5 +855,5 @@ public class AusentismosManagedBean implements Serializable {
     public void setFlagRender(boolean flagRender) {
         this.flagRender = flagRender;
     }
-    
+
 }

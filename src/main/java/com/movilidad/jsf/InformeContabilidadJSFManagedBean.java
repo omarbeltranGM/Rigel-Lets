@@ -1,10 +1,8 @@
 package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
-import com.movilidad.ejb.GopUnidadFuncionalFacadeLocal;
 import com.movilidad.ejb.KmConciliadoFacadeLocal;
 import com.movilidad.ejb.PrgTcResumenFacadeLocal;
-import com.movilidad.model.GopUnidadFuncional;
 import com.movilidad.model.KmConciliado;
 import com.movilidad.model.PrgTcResumen;
 import com.movilidad.util.beans.InformeContabilidad;
@@ -25,13 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.TabChangeEvent;
@@ -233,9 +231,25 @@ public class InformeContabilidadJSFManagedBean implements Serializable {
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
         if (validarUrlBMO()) {
-            file = new DefaultStreamedContent(stream, "text/plain", "Kilómetros_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xlsx");
+            file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("Kilómetros_" 
+                        + Util.dateFormat(fecha_inicio) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin) 
+                        + ".xlsx")
+                .build();
         } else {
-            file = new DefaultStreamedContent(stream, "text/plain", "Kilómetros_" + Util.dateFormat(fecha_inicio_CX) + "_al_" + Util.dateFormat(fecha_fin_CX) + ".xlsx");
+            file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("Kilómetros_" 
+                        + Util.dateFormat(fecha_inicio_CX) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin_CX) 
+                        + ".xlsx")
+                .build();
         }
     }
 
@@ -270,7 +284,15 @@ public class InformeContabilidadJSFManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "Kilómetros_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("Kilómetros_" 
+                        + Util.dateFormat(fecha_inicio) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin) 
+                        + ".xlsx")
+                .build();
     }
 
     public String formatearFecha(Date fecha) {

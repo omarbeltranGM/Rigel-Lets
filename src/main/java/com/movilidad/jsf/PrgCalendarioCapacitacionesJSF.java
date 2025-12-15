@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
@@ -22,6 +22,7 @@ import com.movilidad.ejb.PrgTcFacadeLocal;
 import com.movilidad.model.Empleado;
 import com.movilidad.model.PrgTc;
 import com.movilidad.model.planificacion_recursos.ActividadCol;
+import com.movilidad.utils.Util;
 import java.util.ArrayList;
 
 /**
@@ -85,13 +86,6 @@ public class PrgCalendarioCapacitacionesJSF implements Serializable {
                     eventoExistente.setData(nuevaData);
                 }
             } else {
-                String estiloEstado = "estado-" + e.getEstado() + "-style";
-                DefaultScheduleEvent nuevoEvento = new DefaultScheduleEvent(
-                        e.getDescripcion() + " - " + e.getPlaRecuLugar().getLugar(),
-                        fechaCompleta,
-                        fechaDuracion,
-                        estiloEstado);
-
                 StringBuilder data = new StringBuilder();
                 if (e.getEmpleado() != null) {
                     data.append("\n")
@@ -100,7 +94,7 @@ public class PrgCalendarioCapacitacionesJSF implements Serializable {
                             .append(e.getEmpleado().getNombresApellidos())
                             .append(" - ")
                             .append(e.getEstado());
-                    
+
                 }
 
                 if (listPrgTc != null && !listPrgTc.isEmpty()) {
@@ -116,7 +110,17 @@ public class PrgCalendarioCapacitacionesJSF implements Serializable {
                     }
                 }
 
-                nuevoEvento.setData(data.toString());
+                String estiloEstado = "estado-" + e.getEstado() + "-style";
+                DefaultScheduleEvent<?> nuevoEvento = DefaultScheduleEvent.builder()
+                        .title(e.getDescripcion() + " - " + e.getPlaRecuLugar().getLugar())
+                        .startDate( Util.dateToLocalDateTime(fechaCompleta))
+                        .endDate(Util.dateToLocalDateTime(fechaDuracion))
+                        .styleClass(estiloEstado)
+                        .data(data)
+//                        .editable(true) // opcional
+//                        .overlapAllowed(true) // opcional
+//                        .allDay(false) // depende del caso
+                        .build();
                 eventosAgrupados.put(clave, nuevoEvento);
             }
 
@@ -128,49 +132,49 @@ public class PrgCalendarioCapacitacionesJSF implements Serializable {
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
-    event = (ScheduleEvent) selectEvent.getObject();
-    
-    listEmpleados = new ArrayList<>();
+        event = (ScheduleEvent) selectEvent.getObject();
 
-    if (event.getData() != null) {
-        String[] lines = event.getData().toString().split("\n");
-        for (String line : lines) {
-            // Verifica si la línea contiene un empleado
-            if (line.contains("-")) {
-                String[] parts = line.split("-");
-                if (parts.length >= 3) {
-                    String identificacion = parts[0].trim();
-                    String nombresApellidos = parts[1].trim();
-                    String estado = parts[2].trim();
-                    String estadoTexto = convertirEstado(estado);
+        listEmpleados = new ArrayList<>();
 
-                    // Crea un objeto Empleado con los datos y lo agrega a la lista
-                    Empleado empleado = new Empleado();
-                    empleado.setIdentificacion(identificacion);
-                    empleado.setNombres(nombresApellidos);
-                    empleado.setApellidos(estadoTexto); // Si deseas que el estado se guarde en apellidos, déjalo así
+        if (event.getData() != null) {
+            String[] lines = event.getData().toString().split("\n");
+            for (String line : lines) {
+                // Verifica si la línea contiene un empleado
+                if (line.contains("-")) {
+                    String[] parts = line.split("-");
+                    if (parts.length >= 3) {
+                        String identificacion = parts[0].trim();
+                        String nombresApellidos = parts[1].trim();
+                        String estado = parts[2].trim();
+                        String estadoTexto = convertirEstado(estado);
 
-                    listEmpleados.add(empleado);
+                        // Crea un objeto Empleado con los datos y lo agrega a la lista
+                        Empleado empleado = new Empleado();
+                        empleado.setIdentificacion(identificacion);
+                        empleado.setNombres(nombresApellidos);
+                        empleado.setApellidos(estadoTexto); // Si deseas que el estado se guarde en apellidos, déjalo así
+
+                        listEmpleados.add(empleado);
                     }
                 }
             }
         }
     }
-    
+
     private String convertirEstado(String estado) {
-    switch (estado) {
-        case "0":
-            return "Pendiente";
-        case "1":
-            return "Aprobado";
-        case "2":
-            return "Rechazado";
-        case "3":
-            return "En Gestión";
-        default:
-            return "PROGRAMADO";
+        switch (estado) {
+            case "0":
+                return "Pendiente";
+            case "1":
+                return "Aprobado";
+            case "2":
+                return "Rechazado";
+            case "3":
+                return "En Gestión";
+            default:
+                return "PROGRAMADO";
+        }
     }
-}
 
     public static Date combinarFechaYHora(Date fecha, String hora) {
         Calendar calendar = Calendar.getInstance();
@@ -255,7 +259,7 @@ public class PrgCalendarioCapacitacionesJSF implements Serializable {
     public void setListPrgTc(List<PrgTc> listPrgTc) {
         this.listPrgTc = listPrgTc;
     }
-    
+
     public List<Empleado> getListEmpleados() {
         return listEmpleados;
     }

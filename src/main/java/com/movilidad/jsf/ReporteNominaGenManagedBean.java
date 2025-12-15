@@ -2,9 +2,7 @@ package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
 import com.movilidad.ejb.GenericaFacadeLocal;
-import com.movilidad.ejb.GopUnidadFuncionalFacadeLocal;
 import com.movilidad.ejb.ParamReporteHorasFacadeLocal;
-import com.movilidad.model.GopUnidadFuncional;
 import com.movilidad.model.ParamAreaUsr;
 import com.movilidad.model.ParamReporteHoras;
 import com.movilidad.security.UserExtended;
@@ -24,11 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -277,7 +275,15 @@ public class ReporteNominaGenManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "RESUMEN_FORTIUS_" + Util.dateFormat(fecha_inicio) + "_al_" + Util.dateFormat(fecha_fin) + ".xls");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("RESUMEN_FORTIUS_" 
+                        + Util.dateFormat(fecha_inicio) 
+                        + "_al_" 
+                        + Util.dateFormat(fecha_fin) 
+                        + ".xls")
+                .build();
     }
 
     public int obtenerMes(Date fecha) {

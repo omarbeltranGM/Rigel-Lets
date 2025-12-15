@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.EmpleadoFacadeLocal;
@@ -33,7 +28,6 @@ import com.movilidad.model.PqrTipo;
 import com.movilidad.model.PqrMaestroDocumentos;
 import com.movilidad.model.PqrMaestroRespaldo;
 import com.movilidad.model.PqrProcede;
-import com.movilidad.model.PrgPattern;
 import com.movilidad.model.PrgRoute;
 import com.movilidad.model.Users;
 import com.movilidad.model.Vehiculo;
@@ -52,12 +46,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -67,7 +61,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *
@@ -787,7 +781,11 @@ public class MaestroPqrBean implements Serializable {
             try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 workbook.write(out);
                 InputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-                file = new DefaultStreamedContent(inputStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Historico.xlsx");
+                file = DefaultStreamedContent.builder()
+                .stream(() -> inputStream)
+                .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .name("Historico.xlsx")
+                .build();
             }
         } catch (IOException e) {
             e.printStackTrace();

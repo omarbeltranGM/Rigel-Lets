@@ -22,9 +22,10 @@ import com.movilidad.security.UserExtended;
 import com.movilidad.utils.ConstantsUtil;
 import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.Util;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import javax.inject.Named;
+import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,15 +35,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultUploadedFile;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -269,7 +270,7 @@ public class PmGrupoJSFManagedBean implements Serializable {
 
     public void reset() {
         mapVehiculo = new HashMap<>();
-        file = new DefaultUploadedFile();
+        file = defaultFile();
         listErrores = new ArrayList<>();
         listPlacas = new ArrayList<>();
         listServbus = new ArrayList<>();
@@ -282,6 +283,14 @@ public class PmGrupoJSFManagedBean implements Serializable {
         PrimeFaces.current().ajax().update("formAsig:tab:datalistErrs");
     }
 
+    private UploadedFile defaultFile() {
+        return (UploadedFile) DefaultStreamedContent.builder()
+        .contentType("application/octet-stream") // sin tipo mime
+        .name("archivo.pdf")                       // nombre del archivo
+        .stream(() -> new ByteArrayInputStream(new byte[0])) // sin información 
+        .build();
+    }
+    
     @Transactional
     public void programar() {
         System.out.println("Entra aquí");

@@ -6,7 +6,7 @@ import com.movilidad.util.beans.AccidenteCtrl;
 import com.movilidad.util.beans.InformeAccidente;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

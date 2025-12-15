@@ -3,7 +3,7 @@ package com.movilidad.ejb;
 import java.util.List;
 import com.movilidad.model.VersionRigel;
 import com.movilidad.model.VersionTipo;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

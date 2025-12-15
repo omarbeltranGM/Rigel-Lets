@@ -32,11 +32,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.xml.datatype.DatatypeConfigurationException;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.xml.datatype.DatatypeConfigurationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**

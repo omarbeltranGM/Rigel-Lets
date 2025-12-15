@@ -6,16 +6,16 @@
 package com.movilidad.jsf;
 
 import java.io.Serializable;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import com.movilidad.model.Novedad;
 import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.ejb.NovedadFacadeLocal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 

@@ -7,15 +7,11 @@ package com.movilidad.ejb;
 
 import com.movilidad.model.AccCausa;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *
-<<<<<<< HEAD
  * @author HP
-=======
- * @author Carlos Ballestas
->>>>>>> 998ff1114ac2ed9094c27bdfc3455a03fa278506
  */
 @Local
 public interface AccCausaFacadeLocal {

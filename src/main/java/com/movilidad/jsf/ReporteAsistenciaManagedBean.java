@@ -18,19 +18,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.poi.ss.usermodel.CellType;
+import static org.apache.poi.ss.usermodel.CellType.NUMERIC;
 
 /**
  *
@@ -116,23 +118,23 @@ public class ReporteAsistenciaManagedBean implements Serializable {
                         Cell celda = fila.getCell(b);
 
                         if (celda != null) {
-                            switch (celda.getCellTypeEnum().toString()) {
-                                case "NUMERIC":
+                            switch (celda.getCellType()) {
+                                case NUMERIC -> {
                                     if (DateUtil.isCellDateFormatted(celda)) {
                                         prgSerconParteTrabajo.setFecha(Util.toDate(Util.dateFormat(celda.getDateCellValue())));
                                     } else {
                                     }
-                                    break;
-                                case "STRING":
+                                }
+                                case STRING -> {
                                     prgSerconParteTrabajo.setSercon(fila.getCell(2).getStringCellValue());
 
-                                    if (fila.getCell(5).getCellTypeEnum().toString().equals("NUMERIC")) {
+                                    if (fila.getCell(5).getCellType() == CellType.NUMERIC) {
                                         prgSerconParteTrabajo.setParteTrabajo(String.valueOf((int) fila.getCell(5).getNumericCellValue()));
                                     } else {
                                         prgSerconParteTrabajo.setParteTrabajo(fila.getCell(5).getStringCellValue());
                                     }
 
-                                    if (fila.getCell(3).getCellTypeEnum().toString().equals("NUMERIC")) {
+                                    if (fila.getCell(3).getCellType() == CellType.NUMERIC) {
                                         prgSerconParteTrabajo.setCodOperador(String.valueOf((int) fila.getCell(3).getNumericCellValue()));
                                     } else {
                                         prgSerconParteTrabajo.setCodOperador(fila.getCell(3).getStringCellValue());
@@ -152,7 +154,7 @@ public class ReporteAsistenciaManagedBean implements Serializable {
                                             prgSerconParteTrabajo.sethFin_Turno3(fila.getCell(12).getStringCellValue());
                                             break;
                                     }
-                                    break;
+                                }
                             }
                         }
 

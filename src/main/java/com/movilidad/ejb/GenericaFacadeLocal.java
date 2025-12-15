@@ -11,7 +11,7 @@ import com.movilidad.model.Novedad;
 import com.movilidad.model.ParamAreaUsr;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

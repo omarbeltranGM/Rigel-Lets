@@ -1,21 +1,16 @@
 package com.movilidad.utils;
 
 import com.movilidad.model.CableRevisionDiaRta;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import org.apache.commons.lang.text.StrSubstitutor;
+import jakarta.mail.BodyPart;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 /**
  *
@@ -176,7 +171,7 @@ public class RevisionDiaUtil {
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(config.get("from"), alias));
 			InternetAddress[] myToList = InternetAddress.parse(destinatario);
-			message.setRecipients(Message.RecipientType.TO, myToList);
+			message.setRecipients(mMessage.RecipientType.TO, myToList);
 
 			if (config.get("mailBcc") != null) {
 				InternetAddress[] myBccList = InternetAddress.parse(config.get("mailBcc"));

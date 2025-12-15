@@ -9,7 +9,7 @@ import com.movilidad.model.PrgTc;
 import com.movilidad.model.RecapacitacionMaestro;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

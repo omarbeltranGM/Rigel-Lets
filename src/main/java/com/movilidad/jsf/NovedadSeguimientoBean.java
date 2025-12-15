@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.NovedadSeguimientoDocsFacadeLocal;
@@ -21,14 +16,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -113,11 +108,19 @@ public class NovedadSeguimientoBean implements Serializable {
             switch (fe) {
                 case "mp3":
                     stream = new FileInputStream(archivo);
-                    fileDescargar = new DefaultStreamedContent(stream, "audio/mpeg", nombreArchivo);
+                    fileDescargar = DefaultStreamedContent.builder()
+                            .stream(() -> stream)
+                            .contentType("audio/mpeg")
+                            .name(nombreArchivo)
+                            .build();
                     break;
                 case "mp4":
                     stream = new FileInputStream(archivo);
-                    fileDescargar = new DefaultStreamedContent(stream, "video/mp4", nombreArchivo);
+                    fileDescargar = DefaultStreamedContent.builder()
+                            .stream(() -> stream)
+                            .contentType("video/mp4")
+                            .name(nombreArchivo)
+                            .build();
                     break;
             }
         }

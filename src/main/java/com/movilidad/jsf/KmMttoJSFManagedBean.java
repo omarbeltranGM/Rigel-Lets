@@ -29,12 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -45,7 +45,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -123,8 +123,8 @@ public class KmMttoJSFManagedBean implements Serializable {
                         Cell celda = fila.getCell(b);
                         if (celda != null) {
 
-                            switch (celda.getCellTypeEnum().toString()) {
-                                case "NUMERIC":
+                            switch (celda.getCellType()) {
+                                case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(celda)) {
                                         auxDate = Util.toDate(Util.dateFormat(celda.getDateCellValue()));
                                     } else {
@@ -132,7 +132,7 @@ public class KmMttoJSFManagedBean implements Serializable {
                                         System.out.println("KILOMETRAJE: " + auxKm);
                                     }
                                     break;
-                                case "STRING":
+                                case STRING:
                                     if (!celda.getStringCellValue().contains("MOVIL") && celda.getStringCellValue() != null) {
                                         auxCodigo = celda.getStringCellValue();
                                         System.out.println("VEHICULO: " + auxCodigo);
@@ -333,7 +333,13 @@ public class KmMttoJSFManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "CumpleDiario_" + Util.dateFormat(fecha) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("CumpleDiario_" 
+                        + Util.dateFormat(fecha) 
+                        + ".xlsx")
+                .build();
     }
 
     public void cargarKmsConciliados() {

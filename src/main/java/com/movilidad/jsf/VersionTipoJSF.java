@@ -5,9 +5,9 @@
 package com.movilidad.jsf;
 
 import java.io.Serializable;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 import com.movilidad.ejb.VersionTipoFacadeLocal;
 import com.movilidad.model.VersionTipo;
 import java.util.List;

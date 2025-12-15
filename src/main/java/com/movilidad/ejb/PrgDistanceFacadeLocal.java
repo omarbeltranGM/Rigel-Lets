@@ -9,7 +9,7 @@ import com.movilidad.model.PrgDistance;
 import com.movilidad.model.PrgStopPoint;
 import java.math.BigDecimal;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

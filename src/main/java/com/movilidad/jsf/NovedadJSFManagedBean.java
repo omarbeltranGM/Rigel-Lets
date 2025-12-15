@@ -17,7 +17,6 @@ import com.movilidad.ejb.NovedadSeguimientoFacadeLocal;
 import com.movilidad.ejb.NovedadTipoDocumentosFacadeLocal;
 import com.movilidad.ejb.NovedadTipoFacadeLocal;
 import com.movilidad.ejb.NovedadTipoInfraccionFacadeLocal;
-import com.movilidad.ejb.ParamAreaUsrFacadeLocal;
 import com.movilidad.ejb.ParamCierreAusentismoFacadeLocal;
 import com.movilidad.ejb.PqrMaestroFacadeLocal;
 import com.movilidad.ejb.PrgSerconFacadeLocal;
@@ -64,26 +63,27 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.json.JSONObject;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -173,8 +173,7 @@ public class NovedadJSFManagedBean implements Serializable {
     private PrgSerconFacadeLocal prgSerconEJB;
     @EJB
     private VehiculoFacadeLocal vehEJB;
-    @EJB
-    private ParamAreaUsrFacadeLocal paramAreaUserEJB;
+
     @Inject
     private AjusteJornadaFromGestionServicio ajusteJornadaFromGestionServicio;
     private UserExtended user = (UserExtended) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -527,7 +526,7 @@ public class NovedadJSFManagedBean implements Serializable {
                     cellStyle.setDataFormat(format.getFormat("DD-MMMM-YYYY"));
                     cell.setCellStyle(cellStyle);
                     cell.setCellValue(cell.getStringCellValue().replace("\'", ""));
-                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    cell.setCellType(CellType.STRING);
                 }
                 if (cell.getColumnIndex() > 1) {
                     if (!cell.getStringCellValue().isEmpty()
@@ -1114,12 +1113,7 @@ public class NovedadJSFManagedBean implements Serializable {
                 }
 
             }
-        }
-        
-        // cuando se está creando una novedad de ausentismo o de accidente laboral se asigna el area del usuario en sesión
-        if (tipoAndDetalleBean.getNovedadTipo().getIdNovedadTipo() == 1 || 
-                tipoAndDetalleBean.getNovedadTipo().getIdNovedadTipo() == 14) {
-            novedad.setParamArea(paramAreaUserEJB.getByIdUser(user.getUsername()).getIdParamArea());
+
         }
 
         return false;

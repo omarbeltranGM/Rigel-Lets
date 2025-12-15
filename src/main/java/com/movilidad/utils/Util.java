@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +27,9 @@ import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,11 +45,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static java.util.regex.Pattern.matches;
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -57,9 +61,6 @@ import org.primefaces.model.StreamedContent;
  */
 public class Util {
 
-    /**
-     * Formato de fecha yyyy-MM-dd HH:mm:ss
-     */
     public static final SimpleDateFormat XML_GREGORIAN_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat DATE_FORMAT_DD_MM_YYYY = new SimpleDateFormat("dd-MM-yyyy");
@@ -233,6 +234,7 @@ public class Util {
      * yyyy-MM-dd
      *
      * @param d Fecha
+     * @param s
      * @return
      */
     public static Date dateFormat(String d, String s) {
@@ -599,7 +601,12 @@ public class Util {
         if (nombreArchivo.length() > 0) {
             out = traerArchivo(ruta, nombreArchivo);
             InputStream myInputStream2 = new ByteArrayInputStream(out.toByteArray());
-            return new DefaultStreamedContent(myInputStream2);
+            return DefaultStreamedContent.builder()
+                    .contentType("application/octet-stream")
+                    .name("archivo.pdf") // nombre a descargar
+                    .stream(() -> myInputStream2) // proveedor de InputStream
+                    .build();
+//            return new DefaultStreamedContent(myInputStream2); //esto retornaba con PrimeFaces 7.0 
         } else {
             return null;
         }
@@ -632,7 +639,11 @@ public class Util {
         if (ruta.length() > 0) {
             out = traerArchivo(ruta);
             InputStream myInputStream2 = new ByteArrayInputStream(out.toByteArray());
-            return new DefaultStreamedContent(myInputStream2);
+            return DefaultStreamedContent.builder()
+                    .contentType("application/octet-stream")
+                    .name("archivo.pdf") // nombre a descargar
+                    .stream(() -> myInputStream2) // proveedor de InputStream
+                    .build();
         } else {
             return null;
         }
@@ -646,7 +657,11 @@ public class Util {
             Path path = new File(ruta).toPath();
             String mimeType = Files.probeContentType(path);
             String ext = ruta.substring(ruta.lastIndexOf('.'), ruta.length());
-            return new DefaultStreamedContent(myInputStream2, mimeType, nombre + ext);
+            return DefaultStreamedContent.builder()
+                    .contentType(mimeType)
+                    .name(nombre + ext) // nombre a descargar
+                    .stream(() -> myInputStream2) // proveedor de InputStream
+                    .build();
         } else {
             return null;
         }
@@ -898,7 +913,7 @@ public class Util {
         }
 
         try {
-            InputStream fin = media.getInputstream();
+            InputStream fin = media.getInputStream();
             in = new BufferedInputStream(fin);
 
             File baseDir = new File(path);
@@ -1126,7 +1141,7 @@ public class Util {
                 ruta = ruta + file.getFileName();
             }
             fileo = new FileOutputStream(new File(ruta));
-            fileo.write(file.getContents());
+            fileo.write(file.getContent());
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1144,7 +1159,8 @@ public class Util {
     }
 
     /**
-     * Permite agregar o restar días a una fecha. 
+     * Permite agregar o restar días a una fecha.
+     *
      * @param fecha a sumar o restar días
      * @param dias numero de días que se sumaran o restaran - negativo para
      * restar, positivo para sumar
@@ -1409,6 +1425,7 @@ public class Util {
 
     /**
      * Retorna un objeto Date en una cadena String en formato "yyyy-MM-dd"
+     *
      * @param d objeto Date
      * @return String Fecha en formato YYYY-MM-DD
      */
@@ -1425,6 +1442,7 @@ public class Util {
 
     /**
      * Retorna un objeto Date en una cadena String en formato "HH:mm:ss"
+     *
      * @param d objeto Date
      * @return String Fecha en formato HH:mm:ss
      */
@@ -1557,14 +1575,14 @@ public class Util {
         Matcher matcher = pattern.matcher(cadena);
         return matcher.matches();
     }
-    
+
     /**
-     * Permite evaluar si una cadena de String corresponde a una fecha en 
+     * Permite evaluar si una cadena de String corresponde a una fecha en
      * formato hh:mm:ss, con valores entre 00:00:00: y 36:00:00
+     *
      * @param cadena de tipo String que contiene la información a evaluar
-     * @return true si la cadena corresponde fecha en 
-     *      formato hh:mm:ss, con valores entre 00:00:00: y 36:00:00.
-     *      false en cualquier otro caso
+     * @return true si la cadena corresponde fecha en formato hh:mm:ss, con
+     * valores entre 00:00:00: y 36:00:00. false en cualquier otro caso
      */
     public static boolean isTimeValidateTo36(String cadena) {
         // Permite horas de 00 a 36, minutos y segundos de 00 a 59
@@ -1575,12 +1593,12 @@ public class Util {
     }
 
     /**
-     * 
+     *
      * @param startDay
      * @param endDay
      * @param limitDay
      * @param limitHour
-     * @return 
+     * @return
      */
     public static String[] getDateRange(String startDay, String endDay, String limitDay, String limitHour) {
         Date currentDate = new Date();
@@ -1616,7 +1634,7 @@ public class Util {
         } catch (Exception e) {
             throw new IllegalArgumentException("Formato de hora no válido. Use HH:mm:ss");
         }
-        
+
         // Verificamos si la fecha actual es menor a la fecha de corte
         if (currentDate.before(limitDate)) {
             // Establecemos la fecha de inicio como el próximo "DIA_INICIO" a partir de la fecha actual
@@ -1639,17 +1657,12 @@ public class Util {
 
     /**
      * permite establecer un valor numérico para el día de la semana a evaluar
-     * 
-     * @param dia de tipo String que indica el nombre del dia en español a evaluar.
-     * @return número que identifica el día de la semana
-     *          1 si es domingo
-     *          2 si es lunes
-     *          3 si es martes
-     *          4 si es miércoles
-     *          5 si es jueves
-     *          6 si es viernes
-     *          7 si es sábado
-     *         -1 cualquier otro caso
+     *
+     * @param dia de tipo String que indica el nombre del dia en español a
+     * evaluar.
+     * @return número que identifica el día de la semana 1 si es domingo 2 si es
+     * lunes 3 si es martes 4 si es miércoles 5 si es jueves 6 si es viernes 7
+     * si es sábado -1 cualquier otro caso
      */
     private static int getDayOfWeek(String dia) {
         switch (dia.toLowerCase(Locale.ROOT)) {
@@ -1679,7 +1692,7 @@ public class Util {
         calendar.add(Calendar.DAY_OF_MONTH, weekday - currentDay);
         return calendar.getTime();
     }
-    
+
     private static Date getNextDay(Calendar calendar, int weekday) {
         int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
         int daysToAgree = (weekday - currentDay + 7) % 7;
@@ -1699,11 +1712,11 @@ public class Util {
     public static boolean hour1IsLowerThanHour2(String hora1, String hora2) {
         return timeToSecs(hora2) - timeToSecs(hora1) > 0;
     }
-    
+
     public static boolean hour1IsLowerOrEqualsThanHour2(String hora1, String hora2) {
         return timeToSecs(hora2) - timeToSecs(hora1) >= 0;
     }
-    
+
     public static int timeToSecs(String t) {
         try {
             String[] li = t.split(":");
@@ -1716,11 +1729,12 @@ public class Util {
             return 0;
         }
     }
-    
+
     /**
      * Método auxiliar para verificar filas vacías
+     *
      * @param row
-     * @return 
+     * @return
      */
     public static boolean isEmptyRow(Row row) {
         if (row == null) {
@@ -1729,10 +1743,25 @@ public class Util {
 
         for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
             Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
                 return false;
             }
         }
         return true;
+    }
+    
+    public static LocalDateTime stringToLocalDateTime (String fecha) {
+        if (fecha != null && !fecha.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return LocalDateTime.parse(fecha, formatter);
+        }
+        return null;
+    }
+    
+    public static LocalDateTime dateToLocalDateTime (Date fecha) {
+        if (fecha != null) {
+            return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        return null;
     }
 }

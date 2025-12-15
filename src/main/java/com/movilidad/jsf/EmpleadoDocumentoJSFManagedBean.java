@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.EmpleadoDocumentosFacadeLocal;
@@ -20,18 +15,16 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.inject.Named;
-import javax.inject.Inject;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -241,8 +234,6 @@ public class EmpleadoDocumentoJSFManagedBean implements Serializable {
     }
 
     public void guardar() throws IOException, ParseException {
-//        validarFechaRadicado();
-//        validarFechaVencimiento();
 
         for (EmpleadoDocumentosArchivo obj : listaDocsAux) {
             obj.getEmpleadoDocumentos().setCreado(MovilidadUtil.fechaCompletaHoy());

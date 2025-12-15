@@ -42,13 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -61,9 +61,10 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  *
@@ -221,7 +222,16 @@ public class GenericaManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        fileReporte = new DefaultStreamedContent(stream, "text/plain", "REPORTE_NOVEDADES_" + Util.dateFormat(fechaInicio) + "_al_" + Util.dateFormat(fechaFin) + ".xlsx");
+        fileReporte = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("REPORTE_NOVEDADES_"
+                        + Util.dateFormat(fechaInicio)
+                        + "_al_"
+                        + Util.dateFormat(fechaFin)
+                        + ".xlsx")
+                .build();
+
     }
 
     public void prepareListEmpleados() {
@@ -368,7 +378,7 @@ public class GenericaManagedBean implements Serializable {
                     cellStyle.setDataFormat(format.getFormat("DD-MMMM-YYYY"));
                     cell.setCellStyle(cellStyle);
                     cell.setCellValue(cell.getStringCellValue().replace("\'", ""));
-                    cell.setCellType(Cell.CELL_TYPE_STRING);
+                    cell.setCellType(CellType.STRING);
                 }
                 if (cell.getColumnIndex() > 1) {
                     if (!cell.getStringCellValue().isEmpty()

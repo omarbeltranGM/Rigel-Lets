@@ -8,8 +8,8 @@ package com.movilidad.dto;
 import com.movilidad.utils.MovilidadUtil;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.Column;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  *

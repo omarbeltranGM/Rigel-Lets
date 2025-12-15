@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.AccidenteVehiculoFacadeLocal;
@@ -25,19 +20,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.faces.convert.FacesConverter;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -113,7 +108,7 @@ public class AccidenteVictimaJSF implements Serializable {
                     accidenteVictima.setEstadoReg(0);
                     accidenteVictimaFacadeLocal.create(accidenteVictima);
                     if (file != null) {
-                        if (file.getContents().length > 0) {
+                        if (file.getSize() > 0) {
                             String path = MovilidadUtil.cargarArchivosAccidentalidad(file, i_idAccidente, "soporteConciliacion", accidenteVictima.getIdAccidenteVictima(), "");
                             accidenteVictima.setPathSoporteConciliacion(path);
                         }
@@ -136,7 +131,7 @@ public class AccidenteVictimaJSF implements Serializable {
                 cargarObjetos();
                 String oldRuta = accidenteVictima.getPathSoporteConciliacion() != null ? accidenteVictima.getPathSoporteConciliacion() : null;
                 if (file != null) {
-                    if (file.getContents().length > 0) {
+                    if (file.getSize() > 0) {
                         String path = MovilidadUtil.cargarArchivosAccidentalidad(file, i_idAccidente, "soporteConciliacion", accidenteVictima.getIdAccidenteVictima(), "");
                         accidenteVictima.setPathSoporteConciliacion(path);
                         if (oldRuta != null) {

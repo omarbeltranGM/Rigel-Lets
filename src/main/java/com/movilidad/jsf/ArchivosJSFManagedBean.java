@@ -6,12 +6,12 @@ import com.movilidad.model.NovedadDocumentos;
 import com.movilidad.model.SegRegistroArmamento;
 import com.movilidad.model.SegRegistroArmamentoDoc;
 import com.movilidad.utils.Util;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import javax.annotation.PostConstruct;
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.event.PhaseId;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 

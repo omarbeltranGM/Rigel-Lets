@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
@@ -33,9 +28,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -159,12 +154,17 @@ public class AccReporteGMJSF implements Serializable {
         String plantilla = Util.getProperty(ConstantsUtil.KEY_PLANTILLA_ACC_GM);
         GeneraXlsx.generar(plantilla, destino, p);
         InputStream stream = new FileInputStream(new File(destino));
-        file = new DefaultStreamedContent(stream,
-                "text/plain",
-                "reporte accidente "
+        
+        file = DefaultStreamedContent.builder()
+        .stream(() -> stream)
+        .contentType("text/plain")
+        .name("reporte accidente "
                 + acc.getIdNovedadTipoDetalle().getTituloTipoNovedad()
                 + "-"
-                + Util.dateFormat(acc.getFechaAcc()) + ".xlsx");
+                + Util.dateFormat(acc.getFechaAcc())
+                + ".xlsx")
+        .build();
+
     }
 
     private List<String> getPlanAccion(List<AccidentePlanAccion> lista) {

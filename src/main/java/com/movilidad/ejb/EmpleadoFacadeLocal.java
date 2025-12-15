@@ -19,7 +19,7 @@ import com.movilidad.util.beans.InformeOperadores;
 import com.movilidad.util.beans.PlantaObz;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

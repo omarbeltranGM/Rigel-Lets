@@ -34,15 +34,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -79,8 +79,6 @@ public class NovedadIncapacidadBean implements Serializable {
     @EJB
     private ParamCierreAusentismoFacadeLocal paramCierreAusentismoEjb;
     @EJB
-    private ParamAreaFacadeLocal paramAreaEJB;
-    @EJB
     private ParamAreaUsrFacadeLocal paramAreaUserEJB;
     @Inject
     private novedadTipoAndDetalleBean tipoAndDetalleBean;
@@ -97,7 +95,6 @@ public class NovedadIncapacidadBean implements Serializable {
     private Novedad selected;
     private Empleado empleado;
     private boolean b_rol = validarRol();
-    private boolean b_rolOp = validarRolOperaciones();
     private boolean b_VerificacionPM = false;
     private boolean b_VerificacionSinFechas = false;
     private boolean b_laboro;
@@ -690,7 +687,7 @@ public class NovedadIncapacidadBean implements Serializable {
             return;
         }
         if (empleado == null || empleado.getNombres() == null) {
-            MovilidadUtil.addErrorMessage("Debe seleccionar un colaborador");
+            MovilidadUtil.addErrorMessage("Debe seleccionar un operador");
             return;
         }
 
@@ -986,22 +983,6 @@ public class NovedadIncapacidadBean implements Serializable {
     }
 
     /**
-     * Verifica si el usuario logueado pertenece al área de operaciones
-     *
-     * @return true si el usuario logueado es un Profesional de operaciones
-     */
-    boolean validarRolOperaciones() {
-        for (GrantedAuthority auth : user.getAuthorities()) {
-//            System.out.println(auth.getAuthority());
-            if (auth.getAuthority().equals("ROLE_TC")) {
-                return true;
-            }
-
-        }
-        return false;
-    }
-    
-    /**
      * Valida si el usuario logueado corresponde al área de Seguridad Vial
      *
      * @return true si el usuario tiene rol ROLE_SEG
@@ -1256,14 +1237,6 @@ public class NovedadIncapacidadBean implements Serializable {
 
     public void setB_DesasignarServicios(boolean b_DesasignarServicios) {
         this.b_DesasignarServicios = b_DesasignarServicios;
-    }
-
-    public boolean isB_rolOp() {
-        return b_rolOp;
-    }
-
-    public void setB_rolOp(boolean b_rolOp) {
-        this.b_rolOp = b_rolOp;
     }
 
 }

@@ -7,8 +7,8 @@ package com.movilidad.util.beans;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.Column;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  *

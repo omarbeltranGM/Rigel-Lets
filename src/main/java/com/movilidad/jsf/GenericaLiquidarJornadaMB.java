@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.GenericaJornadaFlexible;
@@ -50,12 +45,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -336,7 +331,15 @@ public class GenericaLiquidarJornadaMB implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", (opt == 1 ? "CONSOLIDADO_LIQUIDACION_" : "PROGRAMADO_LIQUIDACION_") + Util.dateFormat(calcularMasivoBean.getFechaDesde()) + "_al_" + Util.dateFormat(calcularMasivoBean.getFechaHasta()) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name((opt == 1 ? "CONSOLIDADO_LIQUIDACION_" : "PROGRAMADO_LIQUIDACION_") 
+                        + Util.dateFormat(calcularMasivoBean.getFechaDesde()) 
+                        + "_al_" 
+                        + Util.dateFormat(calcularMasivoBean.getFechaHasta()) 
+                        + ".xlsx")
+                .build();
     }
 
     /**
@@ -356,7 +359,15 @@ public class GenericaLiquidarJornadaMB implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "REPORTE_PROGRAMADO_" + Util.dateFormat(calcularMasivoBean.getFechaDesde()) + "_al_" + Util.dateFormat(calcularMasivoBean.getFechaHasta()) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("REPORTE_PROGRAMADO_" 
+                        + Util.dateFormat(calcularMasivoBean.getFechaDesde()) 
+                        + "_al_" 
+                        + Util.dateFormat(calcularMasivoBean.getFechaHasta()) 
+                        + ".xlsx")
+                .build();
     }
 
     /**

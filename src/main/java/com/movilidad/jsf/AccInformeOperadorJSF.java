@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.AccCausaFacadeLocal;
@@ -66,16 +61,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.transaction.Transactional;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.map.PointSelectEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.Marker;
@@ -473,7 +468,7 @@ public class AccInformeOperadorJSF implements Serializable {
 
     void guardarCroquis(AccInformeOpe aio) {
         if (fileCroquis != null) {
-            if (fileCroquis.getContents().length > 0) {
+            if (fileCroquis != null && fileCroquis.getSize() > 0) {
                 String path = MovilidadUtil.cargarArchivosAccidentalidad(fileCroquis, aio.getIdAccidente().getIdAccidente(), "InformeOperador", aio.getIdAccInformeOpe(), "croquis");
                 if (path != null) {
                     aio.setPathCroquis(path);
@@ -481,25 +476,11 @@ public class AccInformeOperadorJSF implements Serializable {
                 }
             }
         }
-//        try {
-//            if (!trazo.equals("")) {
-//                String base64Image = trazo.split(",")[1];
-//                byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Image);
-//             String guardarFoto = MovilidadUtil.guardarFoto(imageBytes, aio.getIdAccidente().getIdAccidente(), "InformeOperador", aio.getIdAccInformeOpe());
-//                if (guardarFoto != null) {
-//                    aio.setPathCroquis(guardarFoto);
-//                    accInformeOpeFacadeLocal.edit(aio);
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            MovilidadUtil.addErrorMessage("No se registró el croquis en el sistema - comunicar al departamento de sistemas");
-//        }
     }
 
     void guardarArchivoAnexo(AccInformeOpe aio) {
         if (fileAnexo != null) {
-            if (fileAnexo.getContents().length > 0) {
+            if (fileAnexo != null && fileAnexo.getSize() > 0) {
                 String path = MovilidadUtil.cargarArchivosAccidentalidad(fileAnexo, aio.getIdAccidente().getIdAccidente(), "InformeOperador", aio.getIdAccInformeOpe(), "anexo");
                 if (path != null) {
                     aio.setPathAnexo(path);

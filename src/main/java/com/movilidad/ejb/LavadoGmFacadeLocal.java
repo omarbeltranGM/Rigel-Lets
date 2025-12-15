@@ -9,7 +9,7 @@ import com.movilidad.model.LavadoGm;
 import com.movilidad.util.beans.CostoLavadoDTO;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

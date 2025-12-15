@@ -4,10 +4,10 @@ import com.movilidad.ejb.UsersFacadeLocal;
 import com.movilidad.model.GopUnidadFuncional;
 import com.movilidad.model.Users;
 import java.io.Serializable;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 /**
  *

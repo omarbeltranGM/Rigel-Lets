@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -92,7 +92,16 @@ public class CalidadManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "InformeQuejas_" + Util.dateFormat(fechaIni) + "_al_" + Util.dateFormat(fechaFin) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .name("InformeQuejas_"
+                        + Util.dateFormat(fechaIni)
+                        + "_al_"
+                        + Util.dateFormat(fechaFin)
+                        + ".xlsx")
+                .build();
+
         current.ajax().update("frmInformeAccidente");
         MovilidadUtil.addSuccessMessage("Reporte generado exitósamente");
     }
@@ -110,7 +119,7 @@ public class CalidadManagedBean implements Serializable {
             MovilidadUtil.addErrorMessage("Debe seleccionar una fecha fin");
             return;
         }
-        
+
         if (Util.validarFechaCambioEstado(fechaIni, fechaFin)) {
             PrimeFaces.current().ajax().update(":msgs");
             MovilidadUtil.addErrorMessage("La fecha inicio no puede ser mayor a la fecha fin");
@@ -119,13 +128,13 @@ public class CalidadManagedBean implements Serializable {
 
         PrimeFaces.current().executeScript("PF('dtNovedades').clearFilters()");
         lista = novedadEjb.getNovedadesSNC(fechaIni, fechaFin);
-        
+
         if (lista == null || lista.isEmpty()) {
             PrimeFaces.current().ajax().update(":msgs");
             MovilidadUtil.addErrorMessage("No se encuentran novedades registradas para ese rango de fechas.");
         }
     }
-    
+
     public Date getFechaIni() {
         return fechaIni;
     }

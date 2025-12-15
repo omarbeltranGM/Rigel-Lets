@@ -7,7 +7,7 @@ package com.movilidad.ejb;
 
 import com.movilidad.model.AccidenteDiligenciasj;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

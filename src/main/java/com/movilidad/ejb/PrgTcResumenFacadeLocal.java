@@ -11,7 +11,7 @@ import com.movilidad.util.beans.KmsEjecutadoRes;
 import com.movilidad.util.beans.KmsResumen;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *

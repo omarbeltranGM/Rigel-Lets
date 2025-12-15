@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.movilidad.ejb.ConfigEmpresaFacadeLocal;
@@ -22,7 +17,6 @@ import com.movilidad.model.VehiculoDocumentos;
 import com.movilidad.security.UserExtended;
 import com.movilidad.util.beans.ServbusIdTipoVehiculo;
 import com.movilidad.utils.*;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -31,12 +25,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.primefaces.event.FileUploadEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -111,7 +105,7 @@ public class PrgTcAsignacionController implements Serializable {
         cargarVehiculos();
         boolean isValidPrograming = true;
 //        String path = Util.saveFile(event.getFile(), 0, "asignacion");
-        Scanner scar = new Scanner(event.getFile().getInputstream());
+        Scanner scar = new Scanner(event.getFile().getInputStream());
         while (scar.hasNextLine()) {
             String nextLine = scar.nextLine();
             String[] split = nextLine.split(separador);

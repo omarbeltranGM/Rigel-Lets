@@ -16,10 +16,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -79,7 +79,15 @@ public class AccPoderManagedBean implements Serializable {
                 String path = ReporteUtil.datosPoder(parametros);
                 File pdf = new File(path);
                 InputStream stream = new FileInputStream(pdf);
-                file = new DefaultStreamedContent(stream, "application/pdf", "Poder_CASO_" + parametros.get("nomOperador") + "_" + Util.dateFormat(accidente.getFechaAcc()) + ".pdf");
+                file = DefaultStreamedContent.builder()
+                        .stream(() -> stream)
+                        .contentType("application/pdf")
+                        .name("Poder_CASO_"
+                                + parametros.get("nomOperador")
+                                + "_"
+                                + Util.dateFormat(accidente.getFechaAcc())
+                                + ".pdf")
+                        .build();
 
                 accidente = null;
                 empleado = null;

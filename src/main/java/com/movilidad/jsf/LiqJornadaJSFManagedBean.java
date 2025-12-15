@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.JornadaFlexible;
@@ -43,12 +38,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -56,19 +51,12 @@ import org.primefaces.model.StreamedContent;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.aja.jornada.util.ConfigJornada;
 import com.movilidad.model.PrgSerconInicial;
-import com.mysql.jdbc.exceptions.MySQLTransactionRollbackException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.PersistenceException;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Propagation;
 
 /**
  *
@@ -255,7 +243,15 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "REPORTE_PROGRAMADO_OPERADORES_" + Util.dateFormat(getFechaDesde()) + "_al_" + Util.dateFormat(getFechaHasta()) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("REPORTE_PROGRAMADO_OPERADORES_" 
+                        + Util.dateFormat(getFechaDesde()) 
+                        + "_al_" 
+                        + Util.dateFormat(getFechaHasta()) 
+                        + ".xlsx")
+                .build();
     }
 
     /**
@@ -280,7 +276,15 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", (opt == 1 ? "CONSOLIDADO_LIQUIDACION_" : "PROGRAMADO_LIQUIDACION_") + Util.dateFormat(fechaDesde) + "_al_" + Util.dateFormat(fechaHasta) + ".xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name((opt == 1 ? "CONSOLIDADO_LIQUIDACION_" : "PROGRAMADO_LIQUIDACION_") 
+                        + Util.dateFormat(fechaDesde) 
+                        + "_al_" 
+                        + Util.dateFormat(fechaHasta) 
+                        + ".xlsx")
+                .build();
     }
 
     /**

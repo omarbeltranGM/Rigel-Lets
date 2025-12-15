@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -33,7 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 /**
  *
@@ -106,7 +106,7 @@ public class JornadaCargaBean implements Serializable {
 
                         if (cell.getColumnIndex() > 3) {
                             switch (cell.getCellType()) {
-                                case 0:
+                                case NUMERIC:
                                     if (DateUtil.isCellDateFormatted(cell)) {
                                         lstFechas.add(cell.getDateCellValue());
                                     }
@@ -129,11 +129,9 @@ public class JornadaCargaBean implements Serializable {
                     jornada.setNombre(row.getCell(1).getStringCellValue()
                             + " " + row.getCell(2).getStringCellValue());
 
-//                String cedula = new BigDecimal(row.getCell(3).getNumericCellValue()).toPlainString();
                     String cedula = formatter.formatCellValue(row.getCell(3));
                     jornada.setCedula(cedula);
                     jornada.setTipo_jornada(row.getCell(c).getStringCellValue());
-//                jornada.setTipo_jornada(row.getCell(c).getStringCellValue().split("\n")[0]); // SOLO HORA
 
                     lista.add(jornada);
                 }
@@ -185,7 +183,11 @@ public class JornadaCargaBean implements Serializable {
         GeneraXlsx.generar(plantilla, destino, parametros);
         File excel = new File(destino);
         InputStream stream = new FileInputStream(excel);
-        file = new DefaultStreamedContent(stream, "text/plain", "JORNADA_CARGA_GENERADA.xlsx");
+        file = DefaultStreamedContent.builder()
+                .stream(() -> stream)
+                .contentType("text/plain")
+                .name("JORNADA_CARGA_GENERADA.xlsx")
+                .build();
     }
 
     public void handleFileUpload(FileUploadEvent event) {

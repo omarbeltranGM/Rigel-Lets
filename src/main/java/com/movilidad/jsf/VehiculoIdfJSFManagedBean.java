@@ -13,16 +13,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.transaction.Transactional;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.transaction.Transactional;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,7 +29,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -83,8 +82,8 @@ public class VehiculoIdfJSFManagedBean implements Serializable {
                         Cell celda = fila.getCell(b);
                         if (celda != null) {
 
-                            switch (celda.getCellTypeEnum().toString()) {
-                                case "NUMERIC":
+                            switch (celda.getCellType()) {
+                                case NUMERIC -> {
                                     if (DateUtil.isCellDateFormatted(celda)) {
                                         if (b == 0) {
                                             fechaInicio = Util.toDate(Util.dateFormat(celda.getDateCellValue()));
@@ -92,12 +91,9 @@ public class VehiculoIdfJSFManagedBean implements Serializable {
                                         fechaFin = Util.toDate(Util.dateFormat(celda.getDateCellValue()));
                                     } else {
                                         auxKm = celda.getNumericCellValue();
-//                                        System.out.println(celda.getNumericCellValue());
                                     }
-                                    break;
-                                case "STRING":
-                                    auxCodigo = celda.getStringCellValue();
-                                    break;
+                                }
+                                case STRING -> auxCodigo = celda.getStringCellValue();
                             }
                         }
                     }

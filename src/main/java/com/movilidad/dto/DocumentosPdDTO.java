@@ -6,7 +6,7 @@
 package com.movilidad.dto;
 
 import java.util.Date;
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 
 /**
  *

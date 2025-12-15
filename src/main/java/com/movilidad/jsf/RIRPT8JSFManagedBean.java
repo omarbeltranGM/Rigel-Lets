@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.genera.xls.GeneraXlsx;
@@ -14,6 +9,7 @@ import com.movilidad.utils.MovilidadUtil;
 import com.movilidad.utils.Util;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -24,10 +20,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.EJB;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
+import jakarta.ejb.EJB;
+import jakarta.inject.Named;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -93,9 +89,14 @@ public class RIRPT8JSFManagedBean implements Serializable {
             GeneraXlsx.generar(plantilla, destino, parametros);
             File excel = new File(destino);
             InputStream stream = new FileInputStream(excel);
-            file = new DefaultStreamedContent(stream, "text/plain", nombreExcel() + ".xlsx");
+            file = DefaultStreamedContent.builder()
+                        .stream(() -> stream)
+                        .contentType("text/plain")
+                        .name(nombreExcel() 
+                            + ".xls")
+                        .build();
 
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }

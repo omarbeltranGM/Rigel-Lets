@@ -8,7 +8,7 @@ package com.movilidad.ejb;
 import com.movilidad.model.PrgSolicitud;
 import com.movilidad.model.PrgSolicitudPermiso;
 import java.util.List;
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  *
