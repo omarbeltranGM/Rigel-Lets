@@ -15,7 +15,7 @@ public class Common {
 
     public static int inited = 0;
 
-    private static final String host = "10.0.2.131";
+    private static final String host = "10.0.4.103";
     private static final String db = "rlmo";
     private static final String pwd = ".*R1g3l2025LMO//*";
     private static final String user = "green_usr";
