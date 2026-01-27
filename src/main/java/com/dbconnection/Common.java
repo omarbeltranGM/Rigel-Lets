@@ -21,10 +21,9 @@ public class Common {
 
     public static int inited = 0;
 
-    // PRUEBAS --> private static final String host = "10.0.3.34";
-    private static final String host = "10.0.3.138";
-    private static final String db = "rgmo";
-    private static final String pwd = ".*R1g3l2021GMO//*";
+    private static final String host = "10.0.4.103";
+    private static final String db = "rlmo";
+    private static final String pwd = ".*R1g3l2025LMO//*";
     private static final String user = "green_usr";
 
     public static void initDriver() {
