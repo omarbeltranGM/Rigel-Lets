@@ -148,8 +148,7 @@
                                                      filterMatchMode="contains"
                                                      filter="true"
                                                      value="#{emplJSFMdB.empl.rh}"
-                                                     style="width: 99.999%"
-                                                     required="true">
+                                                     style="width: 99.999%">
                                         <f:selectItem itemLabel="Seleccione uno" itemValue="" />
                                         <f:selectItem itemLabel="A+" itemValue="A+" />
                                         <f:selectItem itemLabel="A-" itemValue="A-" />
@@ -188,8 +187,7 @@
                                                      filterMatchMode="contains" 
                                                      filter="true" 
                                                      style="width: 99.999%"
-                                                     value="#{emplJSFMdB.i_idMunicipio}"
-                                                     required="true">
+                                                     value="#{emplJSFMdB.i_idMunicipio}">
                                         <f:selectItem itemLabel="Seleccione uno" itemValue="0" noSelectionOption="true" />
                                         <f:selectItems  value="#{emplJSFMdB.listEmplMunicipios}"
                                                         var="muni" itemLabel="#{muni.nombre}"
@@ -220,7 +218,7 @@
                                     <p:outputLabel for="NUMTelefonoM" value="Tel Móvil"/>
                                 </div>
                                 <div class="ui-g-12 ui-ml-12 ui-lg-12 Padding0">
-                                    <p:inputMask id="NUMTelefonoM" value="#{emplJSFMdB.empl.telefonoMovil}" required="true" mask="(999) 999-9999"/>
+                                    <p:inputMask id="NUMTelefonoM" value="#{emplJSFMdB.empl.telefonoMovil}" mask="(999) 999-9999"/>
                                 </div>
                             </div>
                             <div class="ui-g-12 ui-ml-12 ui-lg-3 Padding3">
@@ -250,7 +248,8 @@
                     <div class="EmptyBox5" />
                     <div class="ui-g-12 ui-ml-12 ui-lg-12 Padding0">
                         <p:fieldset toggleable="true" legend="Datos para la Empresa">
-                            <div class="ui-g-6 ui-ml-6 ui-lg-2 Padding3">
+                            <!--
+                            <div class="ui-g-6 ui-ml-6 ui-lg-2 Padding3" >
                                 <div class="ui-g-12 ui-ml-12 ui-lg-12 Padding0">
                                     <p:outputLabel for="txtCodigoI" value="Código"/>
                                 </div>
@@ -271,7 +270,7 @@
                                         <p:keyFilter regEx="/[0-9]/i"/>
                                     </p:inputText>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="ui-g-6 ui-ml-6 ui-lg-2 Padding3">
                                 <div class="ui-g-12 ui-ml-12 ui-lg-12 Padding0">
                                     <p:outputLabel for="SOMPatio"  value="Patio" />
@@ -350,7 +349,8 @@
                                                 showOtherMonths="true" showOn="button"/>
                                 </div>
                             </div>
-                            <div class="ui-g-6 ui-ml-6 ui-lg-2 Padding3">
+                            
+                            <div class="ui-g-6 ui-ml-6 ui-lg-2 Padding3" jsf:rendered="false">
                                 <div class="ui-g-12 ui-ml-12 ui-lg-12 Padding0">
                                     <p:outputLabel for="SEmpleador" value="Empleador"/>
                                 </div>

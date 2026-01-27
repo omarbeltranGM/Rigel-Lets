@@ -403,7 +403,7 @@ public class EmpleadosJSFManagedBean implements Serializable {
     public void setValoresEmpleado() {
         empl.setIdEmpleadoCargo(new EmpleadoTipoCargo(i_idCargo));
         empl.setIdEmpleadoDepartamento(new EmpleadoDepartamento(i_idDepartamento));
-        empl.setIdEmpleadoMunicipio(new EmpleadoMunicipio(i_idMunicipio));
+        empl.setIdEmpleadoMunicipio(new EmpleadoMunicipio(i_idMunicipio == 0 ? 151 : i_idMunicipio));// se deja por defecto Bogotá
         empl.setIdEmpleadoEstado(new EmpleadoEstado(i_idEsdado));
         empl.setIdEmpleadoTipoIdentificacion(new EmpleadoTipoIdentificacion(i_idTipoIdentificacion));
         empl.setIdOperacionPatio(new OperacionPatios(i_idPatio));

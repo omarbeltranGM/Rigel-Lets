@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.model;
 
 import com.movilidad.util.beans.InformeInterventoria;
@@ -246,8 +241,7 @@ public class Empleado implements Serializable {
     private String direccion;
     @Column(name = "telefono_fijo")
     private String telefonoFijo;
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = true)
     @Column(name = "telefono_movil")
     private String telefonoMovil;
     @Column(name = "email_personal")
@@ -272,12 +266,10 @@ public class Empleado implements Serializable {
     @NotNull
     @Column(name = "genero")
     private Character genero;
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = true)
     @Column(name = "rh")
     private String rh;
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = true)
     @Column(name = "path_foto")
     private String pathFoto;
     @Basic(optional = false)
@@ -327,7 +319,7 @@ public class Empleado implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EmpleadoEstado idEmpleadoEstado;
     @JoinColumn(name = "id_empleado_municipio", referencedColumnName = "id_empleado_ciudad")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private EmpleadoMunicipio idEmpleadoMunicipio;
     @JoinColumn(name = "id_operacion_patio", referencedColumnName = "id_operacion_patios")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
