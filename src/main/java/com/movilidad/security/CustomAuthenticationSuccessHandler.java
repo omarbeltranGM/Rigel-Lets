@@ -38,6 +38,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                     return "/mtto/clasificNovMtto/list.jsf?faces-redirect=true";
                 case "ROLE_SEG":
                     return "acc/accidente/master.jsf?faces-redirect=true";
+                case "ROLE_LIQ":
+                    return "genericaJornada/ControlJornada.jsf?faces-redirect=true";
+                case "ROLE_TC":
+                    return "empleado/empleadoTabla.jsf?faces-redirect=true";
                 default:
                     break;
             } 
