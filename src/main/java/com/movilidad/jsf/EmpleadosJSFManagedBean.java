@@ -82,7 +82,7 @@ public class EmpleadosJSFManagedBean implements Serializable {
     private String codigoTransMi;
     private String nombreC;
     private String apellidoC;
-
+    private boolean cargar_foto;
     private final int mayorEdad = 18;
 
     private List<EmpleadoEstado> listEmplEstados;
@@ -137,6 +137,7 @@ public class EmpleadosJSFManagedBean implements Serializable {
             this.listEmpls = new ArrayList();
             listarEmpleados();
             validarRol();
+            cargar_foto = false;
         } else if (MovilidadUtil.validarUrl("listadoColaboradores/colaboradoresEmpleados")) {
             cargarPorUnidadFuncional();
         }
@@ -251,7 +252,7 @@ public class EmpleadosJSFManagedBean implements Serializable {
                 return true;
             }
         }
-        if (empl.getEmailPersonal() != null) {
+        if (empl.getEmailPersonal() != null && !empl.getEmailPersonal().isEmpty()) {
             if (emplEJB.findCampo("emailPersonal", empl.getEmailPersonal(), idParaConsulta) != null) {
                 MovilidadUtil.addErrorMessage(ConstantsUtil.YA_ESXITE_EMAIL_PERSONAL);
                 return true;
@@ -263,9 +264,8 @@ public class EmpleadosJSFManagedBean implements Serializable {
                 return true;
             }
         }
-        if (empl.getIdEmpleado() == null && uploadFotoMB.getFile() == null) {
-            MovilidadUtil.addErrorMessage("Se debe Cargar una foto");
-            return true;
+        if (empl.getIdEmpleado() == null && uploadFotoMB.getFile() != null) {
+            cargar_foto = true;
         }
         return false;
     }
@@ -293,16 +293,24 @@ public class EmpleadosJSFManagedBean implements Serializable {
                 empl.setPathFoto("/");
                 empl.setCertificado(0);
                 emplEJB.create(empl);
-
-                String path = null;
-                path = uploadFotoMB.GuardarFotoEmpleado(empl.getIdentificacion());
-                empl.setPathFoto(path);
-                if (path != null) {
+                MovilidadUtil.addSuccessMessage("Empleado registrado");
+                PrimeFaces.current().executeScript("PF('dlgEmpelado').hide();");
+                
+                if (cargar_foto) {
+                    try {
+                    String path = null;
+                    path = uploadFotoMB.GuardarFotoEmpleado(empl.getIdentificacion());
                     empl.setPathFoto(path);
-                    emplEJB.edit(empl);
-                    MovilidadUtil.addSuccessMessage("Registro exitoso Estado Empleado");
-                    empl = new Empleado();
-                    PrimeFaces.current().executeScript("PF('dlgEmpelado').hide();");
+                    if (path != null) {
+                        empl.setPathFoto(path);
+                        emplEJB.edit(empl);
+                        MovilidadUtil.addSuccessMessage("Foto de empleado cargada");
+                        empl = new Empleado();
+                        PrimeFaces.current().executeScript("PF('dlgEmpelado').hide();");
+                    }
+                    }catch (Exception e){
+                        MovilidadUtil.addFatalMessage("Problema al cargar foto, contacte al administrador");
+                    }
                 }
             }
             listarEmpleados();
@@ -402,7 +410,7 @@ public class EmpleadosJSFManagedBean implements Serializable {
 
     public void setValoresEmpleado() {
         empl.setIdEmpleadoCargo(new EmpleadoTipoCargo(i_idCargo));
-        empl.setIdEmpleadoDepartamento(new EmpleadoDepartamento(i_idDepartamento));
+        empl.setIdEmpleadoDepartamento(new EmpleadoDepartamento(i_idDepartamento == 0 ? 3 : i_idDepartamento));// se deja por defecto Bogotá
         empl.setIdEmpleadoMunicipio(new EmpleadoMunicipio(i_idMunicipio == 0 ? 151 : i_idMunicipio));// se deja por defecto Bogotá
         empl.setIdEmpleadoEstado(new EmpleadoEstado(i_idEsdado));
         empl.setIdEmpleadoTipoIdentificacion(new EmpleadoTipoIdentificacion(i_idTipoIdentificacion));
