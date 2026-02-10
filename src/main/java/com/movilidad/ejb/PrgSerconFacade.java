@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.ejb;
 
 import com.aja.jornada.model.PrgSerconLiqUtil;
@@ -10,8 +5,6 @@ import com.movilidad.dto.EmpleadoDescansoDTO;
 import com.movilidad.dto.EntradaSalidaJornadaDTO;
 import com.movilidad.dto.HoraPrgEjecDTO;
 import com.movilidad.dto.PrgSerconDTO;
-import com.movilidad.model.GenericaJornada;
-import com.movilidad.model.GenericaJornadaInicial;
 import com.movilidad.model.PrgSercon;
 import com.movilidad.model.PrgSerconInicial;
 import com.movilidad.util.beans.ConsolidadoLiquidacion;
@@ -187,6 +180,104 @@ public class PrgSerconFacade extends AbstractFacade<PrgSercon> implements PrgSer
 
     private String getData(String data) {
         return data == null ? "00:00:00" : data;
+    }
+
+    // Versión optimizada de updateSerconFromList usando CASE WHEN para PrgSercon
+    @Override
+    public void updateSerconFromListOptimizedV2(List<PrgSercon> sercones, int opc) {
+        if (sercones == null || sercones.isEmpty()) {
+            return;
+        }
+
+        try {
+            int estimatedSize = sercones.size() * 500;
+            StringBuilder sql = new StringBuilder(estimatedSize);
+
+            String[] campos = {
+                "diurnas", "nocturnas", "extra_diurna", "extra_nocturna",
+                "festivo_diurno", "festivo_nocturno", "festivo_extra_diurno",
+                "festivo_extra_nocturno", "dominical_comp_diurnas", "dominical_comp_nocturnas"
+            };
+
+            sql.append("UPDATE prg_sercon ps SET ");
+
+            for (int fieldIndex = 0; fieldIndex < campos.length; fieldIndex++) {
+                if (fieldIndex > 0) sql.append(", ");
+
+                sql.append("ps.").append(campos[fieldIndex]).append(" = CASE ");
+
+                for (PrgSercon s : sercones) {
+                    sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                    .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                    .append(" THEN '").append(getFieldValuePrgSercon(s, fieldIndex)).append("' ");
+                }
+                sql.append("ELSE ps.").append(campos[fieldIndex]).append(" END");
+            }
+
+            sql.append(", ps.production_time = CASE ");
+            for (PrgSercon s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getProductionTime())).append("' ");
+            }
+            sql.append("ELSE ps.production_time END");
+
+            sql.append(", ps.cargada = CASE ");
+            for (PrgSercon s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN 1 ");
+            }
+            sql.append("ELSE ps.cargada END");
+
+            sql.append(", ps.compensatorio = CASE ");
+            for (PrgSercon s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getCompensatorio())).append("' ");
+            }
+            sql.append("ELSE ps.compensatorio END");
+
+            sql.append(" WHERE ps.estado_reg = 0 ");
+            if (opc == 1) {
+                sql.append("AND (ps.autorizado <> 1 OR ps.autorizado IS NULL) ");
+            }
+
+            sql.append("AND (");
+            for (int i = 0; i < sercones.size(); i++) {
+                PrgSercon s = sercones.get(i);
+                if (i > 0) sql.append(" OR ");
+                sql.append("(ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado()).append(")");
+            }
+            sql.append(")");
+
+            Query q = this.em.createNativeQuery(sql.toString());
+            int affectedRows = q.executeUpdate();
+
+            System.out.println("PrgSercon - Registros actualizados en batch: " + affectedRows);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar registros PrgSercon en lote", e);
+        }
+    }
+
+    // Helper method para obtener valores de campo PrgSercon
+    private String getFieldValuePrgSercon(PrgSercon s, int fieldIndex) {
+        switch (fieldIndex) {
+            case 0: return getData(s.getDiurnas());
+            case 1: return getData(s.getNocturnas());
+            case 2: return getData(s.getExtraDiurna());
+            case 3: return getData(s.getExtraNocturna());
+            case 4: return getData(s.getFestivoDiurno());
+            case 5: return getData(s.getFestivoNocturno());
+            case 6: return getData(s.getFestivoExtraDiurno());
+            case 7: return getData(s.getFestivoExtraNocturno());
+            case 8: return getData(s.getDominicalCompDiurnas());
+            case 9: return getData(s.getDominicalCompNocturnas());
+            default: return "";
+        }
     }
 
     @Override

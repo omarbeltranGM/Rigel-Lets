@@ -138,6 +138,8 @@ public interface PrgSerconFacadeLocal {
 
     void updatePrgSerconFromListOptimizedV2(List<PrgSerconLiqUtil> sercones, int opc);
 
+    void updateSerconFromListOptimizedV2(List<PrgSercon> sercones, int opc);
+
     void updatePrgSerconFromListWithoutProductionTime(List<PrgSerconLiqUtil> sercones);
 
     public List<PrgSercon> obtenerRegistrosByFechasAndUnidadFuncional(Date desde, Date hasta, int idGopUnidadFuncional, int idEmpleado);

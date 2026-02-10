@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.GenericaJornadaFlexible;
@@ -34,7 +29,6 @@ import com.movilidad.utils.TokenGeneratorUtil;
 import com.movilidad.utils.Util;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,9 +45,7 @@ import static com.aja.jornada.util.Util.getDiaSemana;
 import com.movilidad.utils.UtilJornada;
 import com.movilidad.ejb.ParamAreaUsrFacadeLocal;
 import java.util.Collections;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.springframework.security.core.GrantedAuthority;
 import java.util.stream.Collectors;
@@ -368,7 +360,7 @@ public class CalcularMasivoJSFManagedBean implements Serializable {
             List<GenericaJornadaLiqUtil> calculoOrdinarioJornadas = 
                     getJornadaFlexible().calculoOrdinarioJornadas(desde, hasta, 1, idParamArea);
             //System.out.println("Cálculo ordinario: " + calculoOrdinarioJornadas.size() + " registros");
-            genJornadaEJB.updatePrgSerconFromList(calculoOrdinarioJornadas, 0);
+            genJornadaEJB.updatePrgSerconFromListOptimizedV2(calculoOrdinarioJornadas, 0);
         } catch (Exception e) {
             //System.out.println("Error en cálculo ordinario de jornadas: " + e);
             throw new Exception("Error en cálculo ordinario", e);
@@ -379,7 +371,7 @@ public class CalcularMasivoJSFManagedBean implements Serializable {
             List<GenericaJornadaLiqUtil> calculoJornadaFlexible = 
                     getJornadaFlexible().calculoJornadaFlexible(desde, hasta, 1, idParamArea);
             //System.out.println("Cálculo flexible: " + calculoJornadaFlexible.size() + " registros");
-            genJornadaEJB.updatePrgSerconFromList(calculoJornadaFlexible, 0);
+            genJornadaEJB.updatePrgSerconFromListOptimizedV2(calculoJornadaFlexible, 0);
         } catch (Exception e) {
             //System.out.println("Error en cálculo de jornada flexible: " + e);
             throw new Exception("Error en cálculo flexible", e);
@@ -390,7 +382,7 @@ public class CalcularMasivoJSFManagedBean implements Serializable {
             List<GenericaJornadaLiqUtil> distribuirDomicalSinCompensatorio = 
                     getJornadaFlexible().distribuirDomicalSinCompensatorio(desde, hasta, idParamArea);
             //System.out.println("Distribución dominical: " + distribuirDomicalSinCompensatorio.size() + " registros");
-            genJornadaEJB.updatePrgSerconFromList(distribuirDomicalSinCompensatorio, 0);
+            genJornadaEJB.updatePrgSerconFromListOptimizedV2(distribuirDomicalSinCompensatorio, 0);
         } catch (Exception e) {
             //System.out.println("Error en distribución dominical: " + e);
             throw new Exception("Error en distribución dominical", e);

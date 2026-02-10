@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.JornadaFlexible;
@@ -56,19 +51,12 @@ import org.primefaces.model.StreamedContent;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.aja.jornada.util.ConfigJornada;
 import com.movilidad.model.PrgSerconInicial;
-import com.mysql.jdbc.exceptions.MySQLTransactionRollbackException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.PersistenceException;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.transaction.annotation.Propagation;
 
 /**
  *
@@ -142,9 +130,10 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
     private JornadaFlexible js;
 
-    private static final int BATCH_SIZE = 100;
-    private static final int MAX_RETRIES = 3;
     private static final Logger log = Logger.getGlobal();
+
+    // Caché de feriados para evitar N queries a BD
+    private Map<String, ParamFeriado> cacheFeriados = new HashMap<>();
     
     private JornadaFlexible getINSTANCEJS() {
         if (js == null) {
@@ -158,6 +147,38 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         if (MovilidadUtil.validarUrl("controlJornada/liqJornada")) {
             cargarDatos();
         }
+    }
+
+    /**
+     * Inicializa el caché de feriados para el rango de fechas especificado.
+     * Carga todos los feriados en memoria para evitar N consultas a BD.
+     * Se extiende el rango +/- 1 día para cubrir jornadas que cruzan medianoche.
+     *
+     * @param desde Fecha inicio del rango
+     * @param hasta Fecha fin del rango
+     */
+    private void inicializarCacheFeriados(Date desde, Date hasta) {
+        cacheFeriados.clear();
+        Date desdeExtendido = MovilidadUtil.sumarDias(desde, -1);
+        Date hastaExtendido = MovilidadUtil.sumarDias(hasta, 2);
+        List<ParamFeriado> listaFeriados = paraFeEJB.findAllByFechaMes(desdeExtendido, hastaExtendido);
+        if (listaFeriados != null) {
+            for (ParamFeriado pf : listaFeriados) {
+                String fechaKey = Util.dateFormat(pf.getFecha());
+                cacheFeriados.put(fechaKey, pf);
+            }
+        }
+    }
+
+    /**
+     * Obtiene un feriado del caché en lugar de consultar la BD.
+     *
+     * @param fecha Fecha a consultar
+     * @return ParamFeriado si existe, null si no es feriado
+     */
+    private ParamFeriado getFeriadoFromCache(Date fecha) {
+        String fechaKey = Util.dateFormat(fecha);
+        return cacheFeriados.get(fechaKey);
     }
 
     /**
@@ -234,7 +255,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
             return;
         }
         generarExcel(0);
-//        generarExcelCargaInicialTurnos();
 
     }
 
@@ -614,11 +634,7 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 List<PrgSerconLiqUtil> list = errorPrgSercon.getLista().stream()
                         .filter(x -> !jornadaFechaDiferente(prgSercon.getFecha(), x))
                         .collect(Collectors.toList());
-                /*
-                PrgSerconLiqUtil get = list.get(0);
-                System.out.println("Jornada liquidada: " + get.toString());
-                setValueFromPrgSerconJar(get, prgSercon);
-                */
+              
                 prgSerconEJB.edit(prgSercon);
                 list = errorPrgSercon.getLista().stream()
                         .filter(x -> jornadaFechaDiferente(prgSercon.getFecha(), x))
@@ -629,14 +645,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         } else {
             prgSercon.setDominicalCompDiurnas(null);
             prgSercon.setDominicalCompNocturnas(null);
-            /**
-             * Validar si la jornada es por parte
-             */
-            if (UtilJornada.esPorPartes(prgSercon)) {
-                //cargarCalcularDatoPorPartes(prgSercon);
-            } else {
-                //cargarCalcularDato(prgSercon);
-            }
             prgSerconEJB.edit(prgSercon);
         }
 
@@ -664,10 +672,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
             MovilidadUtil.addErrorMessage("Opción no válida, la jornada se encuentra en estado de borrado.");
             return;
         }
-//        if (prgSercon.getPrgModificada() != null && prgSercon.getPrgModificada() == 2) {
-//            MovilidadUtil.addErrorMessage("Opción no válida");
-//            return;
-//        }
         if (flagCalcularJornada()) {
             MovilidadUtil.addErrorMessage("Opción no valida");
             return;
@@ -692,13 +696,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         }
         if (UtilJornada.tipoLiquidacion()) {
             if (MovilidadUtil.isSunday(prgSercon.getFecha())) {
-                /*
-                List<PrgSerconLiqUtil> preCagarHorasDominicales = getINSTANCEJS().preCagarHorasDominicales(prgSercon.getFecha(),
-                        prgSercon.getIdGopUnidadFuncional().getIdGopUnidadFuncional(),
-                        prgSercon.getIdEmpleado().getIdEmpleado(), cargarObjetoParaJar(prgSercon));
-                PrgSerconLiqUtil get = preCagarHorasDominicales.get(0);
-                setValueFromPrgSerconJar(get, prgSercon);
-                */
                 prgSerconEJB.edit(prgSercon);
             } else {
                 String timeOrigin1 = prgSercon.getTimeOrigin();
@@ -766,8 +763,7 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
                     prgSerconEJB.updatePrgSerconFromList(preCagarHorasDominicales, 0);
 
-                };
-
+                }
             }
         } else {
             prgSercon.setDominicalCompDiurnas(null);
@@ -1107,7 +1103,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         //La jornada conmienza un domingo y termina en festivo (HF)
         //La jornda fue el mismo día y NO es fetivo (HH)
         if (caso == 2 || caso == 3) {
-//            System.out.println("Caso 2 Y1SUS");
             ps.setFestivoDiurno(MovilidadUtil.toTimeSec(MovilidadUtil.toSecs(
                     ps.getDiurnas()) + MovilidadUtil.toSecs(ps.getFestivoDiurno())));
             ps.setFestivoNocturno(MovilidadUtil.toTimeSec(MovilidadUtil.toSecs(
@@ -1128,7 +1123,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 //        Si la jornada comienza en hábil y termina un dia domingo (HH)
 //        Si la jornada comienza en domingo y termina un dia hábil (HH)
         if (caso == 4 || caso == 5) {
-//            System.out.println("Caso 4 Y1SUS");
             if (MovilidadUtil.toSecs(timeOrigin) < MovilidadUtil.toSecs(UtilJornada.getIniNocturna())) {
                 diurnas_dom = MovilidadUtil.toSecs(UtilJornada.getIniNocturna()) - MovilidadUtil.toSecs(timeOrigin);
                 nocturnas_dom = ultimaHoraDia - MovilidadUtil.toSecs(timeOrigin) - diurnas_dom;
@@ -1160,7 +1154,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 }
 
             } else {
-//              System.out.println("Sin Diurnas");
                 nocturnas_dom = ultimaHoraDia - MovilidadUtil.toSecs(timeOrigin);
                 ps.setFestivoDiurno(calculator.hr_cero);
                 ps.setFestivoNocturno(MovilidadUtil.toTimeSec(nocturnas_dom));
@@ -1170,8 +1163,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         }
 
         if (caso == 0) {
-//                System.out.println("Caso 0 Y1SUS");
-
             ps.setDominicalCompDiurnaExtra(null);
             ps.setDominicalCompNocturnaExtra(null);
             ps.setDominicalCompDiurnas(null);
@@ -1183,58 +1174,9 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
     public PrgSercon convertirFestivoConComp(PrgSercon ps, int caso) {
 
-        int ultimaHoraDia = MovilidadUtil.toSecs(calculator.fin_dia);
-        int horaIniSec;
-        int horaFinSec;
-//        String timeOrigin;
-//        String timeDestiny;
         if (ps.getDominicalCompDiurnas() != null) {
             return null;
         }
-//
-//        if (ps.getAutorizado() != null && ps.getAutorizado() == 1) {
-//            if (ps.getRealTimeOrigin() != null) {
-//                timeOrigin = ps.getRealTimeOrigin();
-//                horaIniSec = MovilidadUtil.toSecs(timeOrigin);
-//                timeDestiny = ps.getRealTimeDestiny();
-//                horaFinSec = MovilidadUtil.toSecs(ps.getRealTimeDestiny());
-//            } else {
-//                timeOrigin = ps.getTimeOrigin();
-//                horaIniSec = MovilidadUtil.toSecs(timeOrigin);
-//                timeDestiny = ps.getTimeDestiny();
-//                horaFinSec = MovilidadUtil.toSecs(timeDestiny);
-//            }
-//        } else if (ps.getPrgModificada() != null && ps.getPrgModificada() == 1) {
-//            timeOrigin = ps.getRealTimeOrigin();
-//            horaIniSec = MovilidadUtil.toSecs(timeOrigin);
-//            timeDestiny = ps.getRealTimeDestiny();
-//            horaFinSec = MovilidadUtil.toSecs(ps.getRealTimeDestiny());
-//        } else {
-//            timeOrigin = ps.getTimeOrigin();
-//            horaIniSec = MovilidadUtil.toSecs(timeOrigin);
-//            timeDestiny = ps.getTimeDestiny();
-//            horaFinSec = MovilidadUtil.toSecs(timeDestiny);
-//        }
-//        int num_para_trabajar = 0;
-//        int diurnas_dom = 0;
-//        int nocturnas_dom = 0;
-//        int diurnas_dom_extra = 0;
-//        int nocturnas_dom_extra = 0;
-
-        //La jornada conmienza un festivo y termina en domingo (FH)
-//        if (caso == 1) {
-//            System.out.println("Caso 1 Y1SUS");
-//
-//            ps.setDominicalCompDiurnas(ps.getFestivoDiurno());
-//            ps.setDominicalCompNocturnas(ps.getFestivoNocturno());
-//            ps.setFestivoDiurno(JornadaUtil.hr_cero);
-//            ps.setFestivoNocturno(JornadaUtil.hr_cero);
-//
-//            return ps;
-//        }
-        //La jornada conmienza un domingo y termina en festivo (HF)
-//        if (caso == 2) {
-//            System.out.println("Caso 2 Y1SUS");
         ps.setDominicalCompDiurnas(ps.getDiurnas());
         ps.setDominicalCompNocturnas(ps.getNocturnas());
         ps.setFestivoExtraNocturno(MovilidadUtil.toTimeSec(
@@ -1248,93 +1190,11 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         ps.setNocturnas(calculator.hr_cero);
 
         return ps;
-//        }
-        //La jornda fue el mismo día y NO es fetivo (HH)
-//        if (caso == 3) {
-//            System.out.println("Caso 3 Y1SUS");
-//            ps.setDominicalCompDiurnas(ps.getDiurnas());
-//            ps.setDominicalCompNocturnas(ps.getNocturnas());
-//            ps.setFestivoExtraNocturno(MovilidadUtil.toTimeSec(MovilidadUtil.toSecs(
-//                    ps.getFestivoExtraNocturno()) + MovilidadUtil.toSecs(ps.getExtraNocturna())));
-//
-//            ps.setFestivoExtraDiurno(MovilidadUtil.toTimeSec(MovilidadUtil.toSecs(
-//                    ps.getFestivoExtraDiurno()) + MovilidadUtil.toSecs(ps.getExtraDiurna())));
-//
-//            ps.setExtraDiurna(JornadaUtil.hr_cero);
-//            ps.setExtraNocturna(JornadaUtil.hr_cero);
-//            ps.setDiurnas(JornadaUtil.hr_cero);
-//            ps.setNocturnas(JornadaUtil.hr_cero);
-//            return ps;
-//        }
-//        Si la jornada comienza en hábil y termina un dia domingo (HH)
-//        Si la jornada comienza en domingo y termina un dia hábil (HH)
-//        if (caso == 4 || caso == 5) {
-//            System.out.println("Caso 4 Y1SUS");
-//            if (MovilidadUtil.toSecs(timeOrigin) < MovilidadUtil.toSecs(JornadaUtil.getIniNocturna())) {
-//                diurnas_dom = MovilidadUtil.toSecs(JornadaUtil.getIniNocturna()) - MovilidadUtil.toSecs(timeOrigin);
-//                nocturnas_dom = ultimaHoraDia - MovilidadUtil.toSecs(timeOrigin) - diurnas_dom;
-//
-//                if (MovilidadUtil.toSecs(ps.getExtraNocturna()) > 0) {
-//
-//                    int horasDominical = ultimaHoraDia - MovilidadUtil.toSecs(timeOrigin);
-//
-//                    if (horasDominical >= MovilidadUtil.toSecs("08:00:00")) {
-//                        String horasExtrasComp = MovilidadUtil.toTimeSec(horasDominical - MovilidadUtil.toSecs("08:00:00"));
-//                        ps.setFestivoExtraNocturno(horasExtrasComp);
-//                        if (MovilidadUtil.toSecs(ps.getFestivoExtraNocturno()) >= MovilidadUtil.toSecs(ps.getExtraNocturna())) {
-//                            ps.setExtraDiurna(JornadaUtil.hr_cero);
-//                        } else {
-//                            ps.setExtraNocturna(MovilidadUtil.toTimeSec(
-//                                    MovilidadUtil.toSecs(ps.getExtraNocturna())
-//                                    - MovilidadUtil.toSecs(ps.getFestivoExtraNocturno())));
-//                        }
-//                        ps.setDominicalCompDiurnas(ps.getDiurnas());
-//                        ps.setDominicalCompNocturnas(ps.getNocturnas());
-//                        ps.setNocturnas(JornadaUtil.hr_cero);
-//                        ps.setDiurnas(JornadaUtil.hr_cero);
-//                    } else {
-//                        ps.setDominicalCompDiurnas(MovilidadUtil.toTimeSec(diurnas_dom));
-//                        ps.setDominicalCompNocturnas(MovilidadUtil.toTimeSec(nocturnas_dom));
-//                    }
-//                } else {
-//                    ps.setExtraNocturna(JornadaUtil.hr_cero);
-//                }
-//
-//            } else {
-////              System.out.println("Sin Diurnas");
-//                nocturnas_dom = ultimaHoraDia - MovilidadUtil.toSecs(timeOrigin);
-//                ps.setDominicalCompDiurnas(JornadaUtil.hr_cero);
-//                ps.setDominicalCompNocturnas(MovilidadUtil.toTimeSec(nocturnas_dom));
-//                ps.setNocturnas(MovilidadUtil.toTimeSec(MovilidadUtil.toSecs(ps.getNocturnas()) - nocturnas_dom));
-//            }
-//            return ps;
-//        }
-
-        //La jornda fue el mismo día y es fetivo (FF)
-//        if (caso == 6) {
-//            System.out.println("Caso 6 Y1SUS");
-//            ps.setDominicalCompDiurnas(ps.getFestivoDiurno());
-//            ps.setDominicalCompNocturnas(ps.getFestivoNocturno());
-//            ps.setFestivoDiurno(JornadaUtil.hr_cero);
-//            ps.setFestivoNocturno(JornadaUtil.hr_cero);
-//            return ps;
-//        }
-//        if (caso == 0) {
-//                System.out.println("Caso 0 Y1SUS");
-//            ps.setDominicalCompDiurnaExtra(null);
-//            ps.setDominicalCompNocturnaExtra(null);
-//            ps.setDominicalCompDiurnas(null);
-//            ps.setDominicalCompNocturnas(null);
-//            return ps;
-//        }
-//        return null;
     }
 
     public void recalcularJornada(PrgSercon ps) {
 
-//        int caso = tieneFestivo(prgSercon);
         PrgSercon objPersistir = convertirFestivoConComp(prgSercon, 0);
-//        PrgSercon objPersistir = convertirFestivoConComp(prgSercon, caso);
         if (objPersistir != null) {
             prgSerconEJB.edit(objPersistir);
         }
@@ -2015,6 +1875,9 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
     private void procesarRegistrosLiquidados(long startTime) throws BusinessLogicException {
         try {
+            // Inicializar caché de feriados UNA sola vez para todo el proceso
+            inicializarCacheFeriados(fechaDesde, fechaHasta);
+
             if (UtilJornada.tipoLiquidacion()) { // flexible
                 procesarLiquidacionFlexible();
             } else {
@@ -2041,11 +1904,8 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
         // Cargar parámetros
         UtilJornada.cargarParametrosJar();
-
-        procesarJornadaOrdinaria();
-        
+        procesarJornadaOrdinaria();   
         procesarJornadaFlexible();
-          
         procesarDomicalSinCompensatorio();
         
     } 
@@ -2068,8 +1928,8 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 System.out.println("TERMINA calculoOrdinarioJornadas---------->" + calculoOrdinarioJornadas.size());
                 log.log(Level.INFO, "TERMINA calculoOrdinarioJornadas---------->{0}", calculoOrdinarioJornadas.size());
 
-                prgSerconEJB.updatePrgSerconFromList(calculoOrdinarioJornadas, 0);
-                log.log(Level.INFO, "TERMINA Actualización calculoOrdinarioJornadas---------->{0}", calculoOrdinarioJornadas.size());
+                prgSerconEJB.updatePrgSerconFromListOptimizedV2(calculoOrdinarioJornadas, 0);
+                log.log(Level.INFO, "TERMINA Actualización calculoOrdinarioJornadas (batch)---------->{0}", calculoOrdinarioJornadas.size());
 
                 return true;
         } catch (Exception e) {
@@ -2096,8 +1956,8 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 System.out.println("TERMINA calculoJornadaFlexible---------->" + calculoJornadaFlexible.size());
                 log.log(Level.INFO, "TERMINA calculoJornadaFlexible---------->{0}", calculoJornadaFlexible.size());
 
-                prgSerconEJB.updatePrgSerconFromList(calculoJornadaFlexible, 0);
-                log.log(Level.INFO, "TERMINA Actualización calculoJornadaFlexible---------->{0}", calculoJornadaFlexible.size());
+                prgSerconEJB.updatePrgSerconFromListOptimizedV2(calculoJornadaFlexible, 0);
+                log.log(Level.INFO, "TERMINA Actualización calculoJornadaFlexible (batch)---------->{0}", calculoJornadaFlexible.size());
 
                 return true;
         } catch (Exception e) {
@@ -2124,9 +1984,9 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 System.out.println("TERMINA Dominical Sin Compensatorio---------->" + distribuirDomicalSinCompensatorio.size());
                 log.log(Level.INFO, "TERMINA Dominical Sin Compensatorio---------->{0}", distribuirDomicalSinCompensatorio.size());
 
-                prgSerconEJB.updatePrgSerconFromList(distribuirDomicalSinCompensatorio, 0);
-                
-                log.log(Level.INFO, "TERMINA Actualización Dominical Sin Compensatorio---------->{0}", distribuirDomicalSinCompensatorio.size());
+                prgSerconEJB.updatePrgSerconFromListOptimizedV2(distribuirDomicalSinCompensatorio, 0);
+
+                log.log(Level.INFO, "TERMINA Actualización Dominical Sin Compensatorio (batch)---------->{0}", distribuirDomicalSinCompensatorio.size());
 
                 return true;
             } catch (RuntimeException | ParseException e) {
@@ -2139,7 +1999,7 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         try {
             prglist = new ArrayList<>();
             prglist = prgSerconEJB.getPrgSerconByDateAndUnidadFunc(
-                fechaDesde, fechaHasta, 
+                fechaDesde, fechaHasta,
                 unidadFuncionalSessionBean.obtenerIdGopUnidadFuncional()
             );
 
@@ -2147,6 +2007,7 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                 throw new BusinessLogicException("No se pudieron obtener los registros para liquidación tradicional");
             }
 
+            List<PrgSercon> processedList = new ArrayList<>();
             for (PrgSercon ps : prglist) {
                 try {
                     if (ps == null) {
@@ -2160,12 +2021,17 @@ public class LiqJornadaJSFManagedBean implements Serializable {
                         cargarCalcularDato(ps);
                     }
 
-                    prgSerconEJB.edit(ps);
+                    processedList.add(ps);
 
                 } catch (Exception e) {
-                    System.err.println("Error procesando registro PrgSercon ID: " + 
+                    System.err.println("Error procesando registro PrgSercon ID: " +
                         (ps != null ? ps.getIdPrgSercon() : "null") + " - " + e.getMessage());
                 }
+            }
+
+            // Batch update en lugar de N llamadas individuales a edit()
+            if (!processedList.isEmpty()) {
+                prgSerconEJB.updateSerconFromListOptimizedV2(processedList, 0);
             }
 
         } catch (Exception e) {
@@ -2449,23 +2315,16 @@ public class LiqJornadaJSFManagedBean implements Serializable {
          * Validar si el total de horas extras en mayor que el criterio minimo
          * para considerar horas extras.
          */
-//        if (totalHorasExtras >= MovilidadUtil.toSecs(JornadaUtil.getCriterioMinHrsExtra())) {
         if (totalHorasExtras > MovilidadUtil.toSecs(UtilJornada.getMaxHrsExtrasDia())) {
             String mssg = "Se excedió el máximo de horas extras " + UtilJornada.getMaxHrsExtrasDia() + ". Encontrado "
                     + MovilidadUtil.toTimeSec((totalProduccion - MovilidadUtil.toSecs(workTime)));
             if (UtilJornada.respetarMaxHorasExtrasDiarias()) {
-//                if (despuesDeEjecutado && JornadaUtil.tipoLiquidacion()) {
-//                    MovilidadUtil.addAdvertenciaMessage(mssg);
-//                    return false;
-//                } else {
                 MovilidadUtil.addErrorMessage(mssg);
                 return true;
-//                }
             } else {
                 MovilidadUtil.addAdvertenciaMessage(mssg);
             }
         }
-//        }
         return false;
     }
 
@@ -2479,7 +2338,6 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         Date resp = prgSerconEJB.totalHorasExtrasByRangoFechaAndIdEmpleado(
                 idEmpleadoFound, fechaParam, primerDiaSmana.getTime(), ultimoDiaSmana.getTime());
         totalHorasExtrasSmnal = resp == null ? calculator.hr_cero : Util.dateToTimeHHMMSS(resp);
-//        System.out.println("totalHorasExtrasSmnal->" + totalHorasExtrasSmnal);
     }
 
     public boolean validarLiquidacionProgramada(PrgSercon psLocal) {
@@ -2517,29 +2375,16 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         int totalProduccion = difPart1 + difPart2 + difPart3;
         int totalHorasExtras = (totalProduccion
                 - UtilJornada.getWorkTimeJornada(psLocal.getSercon(), psLocal.getWorkTime()));
-
-//        boolean despuesDeEjecutado = JornadaUtil.registroDespuesDeEjecutado(psLocal.getFecha(), JornadaUtil.ultimaHoraRealJornada(psLocal));
-        /**
-         * Validar si las horas extras generadas son mayores que el criterio
-         * minimo para horas extras.
-         */
-//        if (validarLiquidacionProgramada(psLocal)
-//                || totalHorasExtras >= MovilidadUtil.toSecs(JornadaUtil.getCriterioMinHrsExtra())) {
+        
         if ((MovilidadUtil.toSecs(totalHorasExtrasSmnal) + totalHorasExtras)
                 > MovilidadUtil.toSecs(UtilJornada.getMaxHrsExtrasSmnl())) {
             String msg = "Se excedió el máximo de horas extras semanales"
                     + UtilJornada.getMaxHrsExtrasSmnl()
                     + ". Encontrado "
                     + MovilidadUtil.toTimeSec((MovilidadUtil.toSecs(totalHorasExtrasSmnal) + totalHorasExtras));
-//            if (despuesDeEjecutado && JornadaUtil.tipoLiquidacion()) {
-//                MovilidadUtil.addAdvertenciaMessage(msg);
-//                return false;
-//            } else {
             MovilidadUtil.addErrorMessage(msg);
             return true;
-//            }
         }
-//        }
         return false;
     }
 

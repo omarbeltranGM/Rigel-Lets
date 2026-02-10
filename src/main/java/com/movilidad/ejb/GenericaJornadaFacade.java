@@ -1180,6 +1180,108 @@ public class GenericaJornadaFacade extends AbstractFacade<GenericaJornada> imple
         }
     }
 
+    // Versión optimizada usando CASE WHEN para actualizar múltiples registros en una sola consulta
+    @Override
+    public void updatePrgSerconFromListOptimizedV2(List<GenericaJornadaLiqUtil> sercones, int opc) {
+        if (sercones == null || sercones.isEmpty()) {
+            return;
+        }
+
+        try {
+            // Estimar capacidad inicial del StringBuilder
+            int estimatedSize = sercones.size() * 500;
+            StringBuilder sql = new StringBuilder(estimatedSize);
+
+            String[] campos = {
+                "diurnas", "nocturnas", "extra_diurna", "extra_nocturna",
+                "festivo_diurno", "festivo_nocturno", "festivo_extra_diurno",
+                "festivo_extra_nocturno", "dominical_comp_diurnas", "dominical_comp_nocturnas"
+            };
+
+            sql.append("UPDATE generica_jornada ps SET ");
+
+            // Construir CASE WHEN para cada campo
+            for (int fieldIndex = 0; fieldIndex < campos.length; fieldIndex++) {
+                if (fieldIndex > 0) sql.append(", ");
+
+                sql.append("ps.").append(campos[fieldIndex]).append(" = CASE ");
+
+                for (GenericaJornadaLiqUtil s : sercones) {
+                    sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                    .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                    .append(" THEN '").append(getFieldValueGen(s, fieldIndex)).append("' ");
+                }
+                sql.append("ELSE ps.").append(campos[fieldIndex]).append(" END");
+            }
+
+            // Agregar campos adicionales
+            sql.append(", ps.production_time = CASE ");
+            for (GenericaJornadaLiqUtil s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getProductionTime())).append("' ");
+            }
+            sql.append("ELSE ps.production_time END");
+
+            sql.append(", ps.cargada = CASE ");
+            for (GenericaJornadaLiqUtil s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN 1 ");
+            }
+            sql.append("ELSE ps.cargada END");
+
+            sql.append(", ps.compensatorio = CASE ");
+            for (GenericaJornadaLiqUtil s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getCompensatorio())).append("' ");
+            }
+            sql.append("ELSE ps.compensatorio END");
+
+            // WHERE clause
+            sql.append(" WHERE ps.estado_reg = 0 ");
+            if (opc == 1) {
+                sql.append("AND (ps.autorizado <> 1 OR ps.autorizado IS NULL) ");
+            }
+
+            sql.append("AND (");
+            for (int i = 0; i < sercones.size(); i++) {
+                GenericaJornadaLiqUtil s = sercones.get(i);
+                if (i > 0) sql.append(" OR ");
+                sql.append("(ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado()).append(")");
+            }
+            sql.append(")");
+
+            Query q = this.em.createNativeQuery(sql.toString());
+            int affectedRows = q.executeUpdate();
+
+            System.out.println("GenericaJornada - Registros actualizados en batch: " + affectedRows);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error al actualizar registros de GenericaJornada en lote", e);
+        }
+    }
+
+    // Método helper para obtener valores de campo por índice para GenericaJornadaLiqUtil
+    private String getFieldValueGen(GenericaJornadaLiqUtil s, int fieldIndex) {
+        switch (fieldIndex) {
+            case 0: return getData(s.getDiurnas());
+            case 1: return getData(s.getNocturnas());
+            case 2: return getData(s.getExtraDiurna());
+            case 3: return getData(s.getExtraNocturna());
+            case 4: return getData(s.getFestivoDiurno());
+            case 5: return getData(s.getFestivoNocturno());
+            case 6: return getData(s.getFestivoExtraDiurno());
+            case 7: return getData(s.getFestivoExtraNocturno());
+            case 8: return getData(s.getDominicalCompDiurnas());
+            case 9: return getData(s.getDominicalCompNocturnas());
+            default: return "";
+        }
+    }
+
     @Override
     public GenericaJornada validarEmplSinJornadaByParamAreaFechaEmpleado(int idEmpleado, Date fecha, int idParamArea) {
         try {

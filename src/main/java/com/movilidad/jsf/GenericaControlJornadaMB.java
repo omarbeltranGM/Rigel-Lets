@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.GenericaJornadaFlexible;
 import com.aja.jornada.dto.ErrorPrgSercon;
 import com.aja.jornada.model.EmpleadoLiqUtil;
 import com.aja.jornada.model.GenericaJornadaLiqUtil;
-import com.aja.jornada.model.GenericaJornadaTipoLiqUtil;
 import com.aja.jornada.model.ParamAreaLiqUtil;
 import com.dbconnection.Common;
 import com.movilidad.ejb.ConfigFacadeLocal;
@@ -92,7 +86,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -123,9 +116,6 @@ public class GenericaControlJornadaMB implements
     private ParamAreaUsrFacadeLocal paramAreaUserEJB;
 
     @EJB
-    private ParamFeriadoFacadeLocal paraFeEJB;
-
-    @EJB
     private GenericaJornadaFacadeLocal genJornadaEJB;
 
     @EJB
@@ -136,9 +126,6 @@ public class GenericaControlJornadaMB implements
 
     @EJB
     private GenericaJornadaTipoFacadeLocal jornadaTEJB;
-
-    @EJB
-    private ConfigFacadeLocal configEJB;
 
     @EJB
     private GenericaJornadaParamFacadeLocal genJorParamEJB;
@@ -213,7 +200,6 @@ public class GenericaControlJornadaMB implements
     private int modulo_opc;
     private double horasExtrasInicio;
     private double horasExtrasFin;
-    private String form_update;
     private String realTimeOrigin;
     private String realTimeDestiny;
     private String observaciones;
@@ -298,7 +284,6 @@ public class GenericaControlJornadaMB implements
             } else {
                 cargarNovedadesMarcaciones(MovilidadUtil.sumarDias(MovilidadUtil.fechaHoy(), -2), MovilidadUtil.fechaHoy());
             }
-//            this.listMarcaDoc = this.marcDocEJB.findAllActivos();
         }
     }
 
@@ -706,8 +691,7 @@ public class GenericaControlJornadaMB implements
      *
      * @param hIni Hora inicio de la jornada
      * @param hFin Hora fin de la jornada
-     * @param gjt GenericaJornadaTipo parametrizada segun la hora inicio y fin
-     * de la jornada.
+     * @param workTime
      * @return numeor de horas en fomato de horas.
      */
     public String horaExtras(String hIni, String hFin, String workTime) {
@@ -1108,7 +1092,7 @@ public class GenericaControlJornadaMB implements
                 list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> fechaDiferente(jornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-                genJornadaEJB.updatePrgSerconFromList(list, 0);
+                genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
 
             }
         }
@@ -1328,7 +1312,7 @@ public class GenericaControlJornadaMB implements
                     list = errorPrgSercon.getListaGen().stream()
                             .filter(x -> fechaDiferente(genericaJornadaNew.getFecha(), x.getFecha()))
                             .collect(Collectors.toList());
-                    genJornadaEJB.updatePrgSerconFromList(list, 0);
+                    genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
 
                 }
             } else {
@@ -1419,7 +1403,6 @@ public class GenericaControlJornadaMB implements
             mailProperties.put("user_name", user.getUsername());
             mailProperties.put("motivo", motivo.getDescripcion());
             mailProperties.put("observacion", gj.getObservaciones());
-//            System.out.println("Notificar...");
             mailProperties.put("url", generarTokenUrl(gj));
             String asunto = "MODIFICACIÓN JORNADA";
             String destinatarios = genJornadaParam.getEmails();
@@ -1786,7 +1769,7 @@ public class GenericaControlJornadaMB implements
                     list = errorPrgSercon.getListaGen().stream()
                             .filter(x -> fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                             .collect(Collectors.toList());
-                    genJornadaEJB.updatePrgSerconFromList(list, 0);
+                    genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
 
                 }
                 consultar();
@@ -2372,7 +2355,7 @@ public class GenericaControlJornadaMB implements
                     list = errorPrgSercon.getListaGen().stream()
                             .filter(x -> fechaDiferente(jornadaAuth.getFecha(), x.getFecha()))
                             .collect(Collectors.toList());
-                    genJornadaEJB.updatePrgSerconFromList(list, 0);
+                    genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
                 }
                 if (op == 1) { // (1) uno para autorizar, (0) cero para no autorizar
                     notificarOperador(jornadaAuth, "Aprobación Ajuste Jornada");

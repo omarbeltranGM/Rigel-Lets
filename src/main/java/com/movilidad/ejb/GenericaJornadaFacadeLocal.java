@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.ejb;
 
 import com.aja.jornada.model.GenericaJornadaLiqUtil;
@@ -111,6 +106,8 @@ public interface GenericaJornadaFacadeLocal {
     List<Date> validarDiasLiquidadosByFechasAndIdAreaIndividual(Date desde, Date hasta, int idParamArea, int idEmpleado);
 
     void updatePrgSerconFromList(List<GenericaJornadaLiqUtil> sercones, int opc);
+
+    void updatePrgSerconFromListOptimizedV2(List<GenericaJornadaLiqUtil> sercones, int opc);
 
     public GenericaJornada validarEmplSinJornadaByParamAreaFechaEmpleado(int idEmpleado, Date fecha, int idParamArea);
     

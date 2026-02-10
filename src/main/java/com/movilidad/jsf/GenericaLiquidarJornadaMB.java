@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.movilidad.jsf;
 
 import com.aja.jornada.controller.GenericaJornadaFlexible;
@@ -263,27 +258,6 @@ public class GenericaLiquidarJornadaMB implements Serializable {
 
     public void descargarProgramacionInicial() throws FileNotFoundException {
 
-//        file = null;
-//
-//        if (Util.validarFechaCambioEstado(calcularMasivoBean.getFechaDesde(), calcularMasivoBean.getFechaHasta())) {
-//            MovilidadUtil.addErrorMessage("La fecha de inicio no puede ser mayor a la fecha fin");
-//            return;
-//        }
-//
-//        if (pau != null) {
-//            if (pau.getIdParamArea() != null) {
-//                lstProgInicial = genJornadaEJB.findJornadasCargadas(pau.getIdParamArea().getIdParamArea(), calcularMasivoBean.getFechaDesde(), calcularMasivoBean.getFechaHasta());
-//       
-//                if (lstProgInicial == null || lstProgInicial.isEmpty()) {
-//                    MovilidadUtil.addErrorMessage("No se encontraron datos para las fechas indicadas");
-//                    return;
-//                }
-//                generarExcelCargaInicialTurnos();
-//            }
-//
-//        } else {
-//            MovilidadUtil.addErrorMessage("usted NO tiene un área asociada.");
-//        }
         file = null;
 
         if (Util.validarFechaCambioEstado(calcularMasivoBean.getFechaDesde(), calcularMasivoBean.getFechaHasta())) {
@@ -495,10 +469,6 @@ public class GenericaLiquidarJornadaMB implements Serializable {
      */
     @Transactional
     public void borradoNomina() {
-//        genericaJornada.setDominicalCompDiurnaExtra("00:00:00");
-//        genericaJornada.setDominicalCompNocturnaExtra("00:00:00");
-//        genericaJornada.setDominicalCompDiurnas("00:00:00");
-//        genericaJornada.setDominicalCompNocturnas("00:00:00");
         genericaJornada.setNominaBorrada(1);
         genJornadaEJB.nominaBorrada(genericaJornada.getIdGenericaJornada(), 1, user.getUsername());
         MovilidadUtil.addSuccessMessage("Se han guardado los cambios satisfactoriamente");
@@ -751,10 +721,6 @@ public class GenericaLiquidarJornadaMB implements Serializable {
     public void dehacerBorradoNomina() {
 
         genericaJornada = genJornadaEJB.find(genericaJornada.getIdGenericaJornada());
-//        genericaJornada.setDominicalCompDiurnaExtra("00:00:00");
-//        genericaJornada.setDominicalCompNocturnaExtra("00:00:00");
-//        genericaJornada.setDominicalCompDiurnas("00:00:00");
-//        genericaJornada.setDominicalCompNocturnas("00:00:00");
         genericaJornada.setNominaBorrada(0);
         genJornadaEJB.nominaBorrada(genericaJornada.getIdGenericaJornada(), 0, user.getUsername());
         MovilidadUtil.addSuccessMessage("Se han guardado los cambios satisfactoriamente");
@@ -1211,23 +1177,15 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                 List<GenericaJornadaLiqUtil> list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> !fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-                /*
-                GenericaJornadaLiqUtil get = list.get(0);
-                setValueFromPrgSerconJar(get, genericaJornada);
-                */
+  
                 genJornadaEJB.edit(genericaJornada);
                 list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-                genJornadaEJB.updatePrgSerconFromList(list, 0);
+                genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
 
             }
         } else {
-            if (flagTipoCalculo) {
-                //calcularMasivoBean.cargarCalcularDatoPorPartes(genericaJornada);
-            } else {
-                //calcularMasivoBean.cargarCalcularDato(genericaJornada, 2);
-            }
             if (calcularMasivoBean.validarHorasPositivas(genericaJornada)) {
                 MovilidadUtil.addErrorMessage("Error al calcular jornada"
                         + genericaJornada.getIdEmpleado().getIdentificacion()
@@ -1268,7 +1226,6 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                     genJornadaExtraEjb.edit(genJorExtra);
                 }
             }
-            //calcularMasivoBean.recalcularJornada(genericaJornada);
         }
         calcularMasivoBean.cargarDatos();
         notificarOperador(genericaJornada, "Aprobación Ajuste Jornada");
@@ -1666,27 +1623,19 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                 list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-                genJornadaEJB.updatePrgSerconFromList(list, 0);
+                genJornadaEJB.updatePrgSerconFromListOptimizedV2(list, 0);
 
             }
         } else {
             boolean flagTipoCalculo = genericaJornada.getIdGenericaJornadaTipo() != null && genericaJornada.getIdGenericaJornadaTipo().getTipoCalculo() == 1;
             System.out.println("flagTipoCalculo->" + flagTipoCalculo);
-            if (flagTipoCalculo) {
-                //calcularMasivoBean.cargarCalcularDatoPorPartes(genericaJornada);
-            } else {
-                //calcularMasivoBean.cargarCalcularDato(genericaJornada, 2);
-            }
-
+    
             if (calcularMasivoBean.validarHorasPositivas(genericaJornada)) {
                 MovilidadUtil.addErrorMessage("Error al calcular jornada"
                         + genericaJornada.getIdEmpleado().getIdentificacion()
                         + " - " + genericaJornada.getIdEmpleado().getNombres()
                         + " " + genericaJornada.getIdEmpleado().getApellidos());
                 return;
-            }
-            if (!flagTipoCalculo && (b_descanso && b_jornadaExtra)) {
-                //calcularExtrasJornadaOrdinaria(genericaJornada);
             }
 
             if (!rol_user.equals(
@@ -1727,7 +1676,6 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                 }
             }
 
-            //calcularMasivoBean.recalcularJornada(genericaJornada);
         }
         calcularMasivoBean.cargarDatos();
 
