@@ -163,7 +163,8 @@ public class PrgSerconFacade extends AbstractFacade<PrgSercon> implements PrgSer
                         + "ps.dominical_comp_diurnas = '" + getData(s.getDominicalCompDiurnas()) + "', "
                         + "ps.dominical_comp_nocturnas = '" + getData(s.getDominicalCompNocturnas()) + "', "
                         + "ps.cargada = 1, "
-                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "' "
+                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "', "
+                        + "ps.work_time = '" + getData(s.getWorkTime()) + "' "
                         + "WHERE ps.fecha = '" + Util.dateFormat(s.getFecha()) + "' "
                         + "AND ps.id_empleado = " + s.getIdEmpleado().getIdEmpleado() + " "
                         + "AND ps.estado_reg = 0 " + parte;
@@ -237,6 +238,14 @@ public class PrgSerconFacade extends AbstractFacade<PrgSercon> implements PrgSer
                 .append(" THEN '").append(getData(s.getCompensatorio())).append("' ");
             }
             sql.append("ELSE ps.compensatorio END");
+
+            sql.append(", ps.work_time = CASE ");
+            for (PrgSercon s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getWorkTime())).append("' ");
+            }
+            sql.append("ELSE ps.work_time END");
 
             sql.append(" WHERE ps.estado_reg = 0 ");
             if (opc == 1) {
@@ -1744,7 +1753,8 @@ public class PrgSerconFacade extends AbstractFacade<PrgSercon> implements PrgSer
                         + "ps.dominical_comp_diurnas = '" + getData(s.getDominicalCompDiurnas()) + "', "
                         + "ps.dominical_comp_nocturnas = '" + getData(s.getDominicalCompNocturnas()) + "', "
                         + "ps.cargada = 1, "
-                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "' "
+                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "', "
+                        + "ps.work_time = '" + getData(s.getWorkTime()) + "' "
                         + "WHERE ps.fecha = '" + Util.dateFormat(s.getFecha()) + "' "
                         + "AND ps.id_empleado = " + s.getIdEmpleado().getIdEmpleado() + " "
                         + "AND ps.estado_reg = 0 " + parte;
@@ -1816,13 +1826,21 @@ public class PrgSerconFacade extends AbstractFacade<PrgSercon> implements PrgSer
                 }
                 sql.append("ELSE ps.compensatorio END");
             }
-            
+
+            sql.append(", ps.work_time = CASE ");
+            for (PrgSerconLiqUtil s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getWorkTime())).append("' ");
+            }
+            sql.append("ELSE ps.work_time END");
+
             // WHERE clause
             sql.append(" WHERE ps.estado_reg = 0 ");
             if (opc == 1) {
                 sql.append("AND (ps.autorizado <> 1 OR ps.autorizado IS NULL) ");
             }
-            
+
             sql.append("AND (");
             for (int i = 0; i < sercones.size(); i++) {
                 PrgSerconLiqUtil s = sercones.get(i);

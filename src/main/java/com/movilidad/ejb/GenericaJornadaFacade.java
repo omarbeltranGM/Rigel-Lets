@@ -1168,7 +1168,8 @@ public class GenericaJornadaFacade extends AbstractFacade<GenericaJornada> imple
                         + "ps.dominical_comp_diurnas = '" + getData(s.getDominicalCompDiurnas()) + "', "
                         + "ps.dominical_comp_nocturnas = '" + getData(s.getDominicalCompNocturnas()) + "', "
                         + "ps.cargada = 1, "
-                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "' "
+                        + "ps.compensatorio = '" + getData(s.getCompensatorio()) + "', "
+                        + "ps.work_time = '" + getData(s.getWorkTime()) + "' "
                         + "WHERE ps.fecha = '" + Util.dateFormat(s.getFecha()) + "' "
                         + "AND ps.id_empleado = " + s.getIdEmpleado().getIdEmpleado() + " "
                         + "AND ps.estado_reg = 0 " + parte;
@@ -1238,6 +1239,14 @@ public class GenericaJornadaFacade extends AbstractFacade<GenericaJornada> imple
                 .append(" THEN '").append(getData(s.getCompensatorio())).append("' ");
             }
             sql.append("ELSE ps.compensatorio END");
+
+            sql.append(", ps.work_time = CASE ");
+            for (GenericaJornadaLiqUtil s : sercones) {
+                sql.append("WHEN ps.fecha = '").append(Util.dateFormat(s.getFecha()))
+                .append("' AND ps.id_empleado = ").append(s.getIdEmpleado().getIdEmpleado())
+                .append(" THEN '").append(getData(s.getWorkTime())).append("' ");
+            }
+            sql.append("ELSE ps.work_time END");
 
             // WHERE clause
             sql.append(" WHERE ps.estado_reg = 0 ");
