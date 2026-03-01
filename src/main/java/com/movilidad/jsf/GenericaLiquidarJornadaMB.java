@@ -60,6 +60,8 @@ import com.aja.jornada.util.ConfigJornada;
 import com.movilidad.ejb.NotificacionCorreoConfFacadeLocal;
 import com.movilidad.ejb.NotificacionTemplateFacadeLocal;
 import com.movilidad.ejb.ParamFeriadoFacadeLocal;
+import com.movilidad.ejb.ParamReporteHorasFacadeLocal;
+import com.movilidad.model.ParamReporteHoras;
 import com.movilidad.model.GenericaJornadaInicial;
 import com.movilidad.model.NotificacionCorreoConf;
 import com.movilidad.model.NotificacionTemplate;
@@ -82,6 +84,11 @@ public class GenericaLiquidarJornadaMB implements Serializable {
 
     @EJB
     private ParamFeriadoFacadeLocal paramFeriadoEjb;
+
+    @EJB
+    private ParamReporteHorasFacadeLocal paramReporteHorasEjb;
+
+    private Map<String, String> mapConceptoHoras = new HashMap<>();
 
     @EJB
     private GenericaJornadaMotivoFacadeLocal jornadaMotivoEJB;
@@ -211,6 +218,13 @@ public class GenericaLiquidarJornadaMB implements Serializable {
         calcularMasivoBean.setRol_user(rol_user);
         LiqGenJornadaBean.setPau(pau);
         calcularMasivoBean.cargarDatos();
+        List<ParamReporteHoras> paramHoras = paramReporteHorasEjb.findAllActivos(0);
+        mapConceptoHoras = paramHoras.stream()
+                .collect(Collectors.toMap(ParamReporteHoras::getTipoHora, ParamReporteHoras::getConcepto, (a, b) -> a));
+    }
+
+    public Map<String, String> getMapConceptoHoras() {
+        return mapConceptoHoras;
     }
 
     private boolean jornadaFlexible() {
@@ -1177,7 +1191,10 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                 List<GenericaJornadaLiqUtil> list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> !fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-  
+                if (!list.isEmpty()) {
+                    GenericaJornadaLiqUtil get = list.get(0);
+                    setValueFromPrgSerconJar(get, genericaJornada);
+                }
                 genJornadaEJB.edit(genericaJornada);
                 list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
@@ -1614,10 +1631,10 @@ public class GenericaLiquidarJornadaMB implements Serializable {
                 List<GenericaJornadaLiqUtil> list = errorPrgSercon.getListaGen().stream()
                         .filter(x -> !fechaDiferente(genericaJornada.getFecha(), x.getFecha()))
                         .collect(Collectors.toList());
-                /*
-                GenericaJornadaLiqUtil get = list.get(0);
-                setValueFromPrgSerconJar(get, genericaJornada);
-                */
+                if (!list.isEmpty()) {
+                    GenericaJornadaLiqUtil get = list.get(0);
+                    setValueFromPrgSerconJar(get, genericaJornada);
+                }
                 genericaJornada.setAutorizado(AutorizadoBK);
                 genJornadaEJB.edit(genericaJornada);
                 list = errorPrgSercon.getListaGen().stream()

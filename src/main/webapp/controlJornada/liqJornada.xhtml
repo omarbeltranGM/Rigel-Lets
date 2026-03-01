@@ -333,59 +333,59 @@
                     </p:column>
                     <p:column
                         visible="false"
-                        headerText="Diurna">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['diurna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.diurnas : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Nocturna (35)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['nocturna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.nocturnas : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Extra Diurna (125)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['extra_diurna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.extraDiurna : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Extra Nocturna (175)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['extra_nocturna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.extraNocturna : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Fest. Diurno (175)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['feriado_diurna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.festivoDiurno : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Fest. Nocturno (210)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['feriado_nocturna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.festivoNocturno : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Fest. Extra Diurno (200)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['feriado_extra_diurna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.festivoExtraDiurno : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
-                        headerText="Fest. Extra Nocturno (250)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['feriado_extra_nocturna']}">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.festivoExtraNocturno : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
                         headerText="Compensatorio">
                         <h:outputText value="#{item.nominaBorrada ==0 ? item.compensatorio : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
                         style="background-color: cadetblue;color: white"
-                        headerText="Dominical Comp Diurno (75)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['dominical_diurno_con_compensatorio']}">
                         <h:outputText value="#{item.nominaBorrada  ==0 ? (item.dominicalCompDiurnas==null ? '00:00:00': item.dominicalCompDiurnas) : '00:00:00'}"/>
                     </p:column>
-                    <p:column 
+                    <p:column
                         visible="false"
                         style="background-color: cadetblue; color: white"
-                        headerText="Dominical Comp Nocturno (110)">
+                        headerText="#{liqJornadaJSFMB.mapConceptoHoras['dominical_nocturno_con_compensatorio']}">
                         <h:outputText value="#{item.nominaBorrada  ==0 ? (item.dominicalCompNocturnas == null ? '00:00:00':item.dominicalCompNocturnas) : '00:00:00'}"/>
                     </p:column>
                     <p:column  styleClass="#{item.liquidado == 1 ? 'cssGreen' : item.liquidado == 0 ? 'cssRed' : null}"

@@ -9,6 +9,8 @@ import com.aja.jornada.model.PrgSerconLiqUtil;
 import com.aja.jornada.util.JornadaUtil;
 import com.genera.xls.GeneraXlsx;
 import com.movilidad.ejb.ParamFeriadoFacadeLocal;
+import com.movilidad.ejb.ParamReporteHorasFacadeLocal;
+import com.movilidad.model.ParamReporteHoras;
 import com.movilidad.ejb.PrgSerconFacadeLocal;
 import com.movilidad.ejb.PrgSerconMotivoFacadeLocal;
 import com.movilidad.ejb.PrgTcFacadeLocal;
@@ -74,6 +76,10 @@ public class LiqJornadaJSFManagedBean implements Serializable {
 
     @EJB
     private PrgSerconFacadeLocal prgSerconEJB;
+    @EJB
+    private ParamReporteHorasFacadeLocal paramReporteHorasEjb;
+
+    private Map<String, String> mapConceptoHoras = new HashMap<>();
     @EJB
     private PrgTcFacadeLocal prgTcEJB;
     @EJB
@@ -147,6 +153,13 @@ public class LiqJornadaJSFManagedBean implements Serializable {
         if (MovilidadUtil.validarUrl("controlJornada/liqJornada")) {
             cargarDatos();
         }
+        List<ParamReporteHoras> paramHoras = paramReporteHorasEjb.findAllActivos(0);
+        mapConceptoHoras = paramHoras.stream()
+                .collect(Collectors.toMap(ParamReporteHoras::getTipoHora, ParamReporteHoras::getConcepto, (a, b) -> a));
+    }
+
+    public Map<String, String> getMapConceptoHoras() {
+        return mapConceptoHoras;
     }
 
     /**
